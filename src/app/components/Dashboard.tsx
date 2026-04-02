@@ -443,10 +443,10 @@ export function Dashboard() {
                   Progress command center
                 </div>
                 <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
-                  {getGreeting()}, {currentUser.fullName.split(' ')[0]}
+                  {getGreeting()}, {currentUser.fullName.split(' ')[0]} Kupal!!
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-cyan-50/85 md:text-base">
-                  Keep your internship hours, daily accomplishments, and completion outlook visible in one place.
+                  Magtrabaho ka! Wag ka puro tulog panay ka pa nood ng video youtube saka patugtog sa spotify kita ka sa CCTV oy.
                 </p>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">

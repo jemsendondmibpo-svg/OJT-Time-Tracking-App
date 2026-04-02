@@ -93,8 +93,8 @@ export function LoginPage() {
               <Sparkles className="w-3.5 h-3.5" />
               Built for internship tracking
             </div>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Welcome Back</h1>
-            <p className="mt-2 text-sm text-slate-600 sm:text-base">Sign in to continue your OJT progress with a clearer, faster dashboard.</p>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Welcome Back Kupal!!</h1>
+            <p className="mt-2 text-sm text-slate-600 sm:text-base">Ano pang hinihintay mong kupal ka mag Log In kana kaya.</p>
           </div>
 
           {/* Login Card */}
