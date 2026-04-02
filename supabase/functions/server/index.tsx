@@ -271,7 +271,7 @@ app.post('/make-server-c77f18a2/logs', async (c) => {
       return c.json({ error: authError || 'Unauthorized' }, 401);
     }
 
-    const { date, isPresent, timeIn, timeOut, lunchStart, lunchEnd, hoursWorked, accomplishment, photoUrl } = await c.req.json();
+    const { date, isPresent, timeIn, timeOut, lunchStart, lunchEnd, isHoliday, hoursWorked, accomplishment, photoUrl } = await c.req.json();
 
     if (!date) {
       return c.json({ error: 'Date is required' }, 400);
@@ -290,6 +290,7 @@ app.post('/make-server-c77f18a2/logs', async (c) => {
         time_out: timeOut,
         lunch_start: lunchStart,
         lunch_end: lunchEnd,
+        is_holiday: isHoliday,
         hours_worked: hoursWorked || 0,
         accomplishment,
         photo_url: photoUrl,
@@ -348,7 +349,7 @@ app.put('/make-server-c77f18a2/logs/:id', async (c) => {
     }
 
     const logId = c.req.param('id');
-    const { date, isPresent, timeIn, timeOut, lunchStart, lunchEnd, hoursWorked, accomplishment, photoUrl } = await c.req.json();
+    const { date, isPresent, timeIn, timeOut, lunchStart, lunchEnd, isHoliday, hoursWorked, accomplishment, photoUrl } = await c.req.json();
 
     if (!date) {
       return c.json({ error: 'Date is required' }, 400);
@@ -366,6 +367,7 @@ app.put('/make-server-c77f18a2/logs/:id', async (c) => {
         time_out: timeOut,
         lunch_start: lunchStart,
         lunch_end: lunchEnd,
+        is_holiday: isHoliday,
         hours_worked: hoursWorked || 0,
         accomplishment,
         photo_url: photoUrl,

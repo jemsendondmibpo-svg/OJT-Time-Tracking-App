@@ -18,6 +18,7 @@ export interface DailyLog {
   timeOut: string;
   lunchStart?: string;
   lunchEnd?: string;
+  isHoliday?: boolean;
   isPresent: boolean;
   accomplishment: string;
   hoursWorked: number;

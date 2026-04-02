@@ -9,7 +9,7 @@ import { DailyLog } from '../types';
 import { calculateHoursWorked } from '../utils';
 import { supabase } from '../supabase-client';
 import { getCurrentUser } from '../auth-utils';
-import { Clock, Save, CalendarClock, NotebookPen } from 'lucide-react';
+import { Clock, Save, CalendarClock, NotebookPen, BadgeAlert } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TimeLogFormProps {
@@ -27,6 +27,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
   const [timeOut, setTimeOut] = useState('');
   const [lunchStart, setLunchStart] = useState('');
   const [lunchEnd, setLunchEnd] = useState('');
+  const [isHoliday, setIsHoliday] = useState(false);
   const [isPresent, setIsPresent] = useState(true);
   const [accomplishment, setAccomplishment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +39,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
       setTimeOut(editingLog.timeOut || '');
       setLunchStart(editingLog.lunchStart || '');
       setLunchEnd(editingLog.lunchEnd || '');
+      setIsHoliday(Boolean(editingLog.isHoliday));
       setIsPresent(editingLog.isPresent);
       setAccomplishment(editingLog.accomplishment || '');
       return;
@@ -48,11 +50,13 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
     setTimeOut('');
     setLunchStart('');
     setLunchEnd('');
+    setIsHoliday(false);
     setAccomplishment('');
     setIsPresent(true);
   }, [editingLog, today]);
 
-  const hoursWorked = calculateHoursWorked(timeIn, timeOut, lunchStart, lunchEnd);
+  const baseHoursWorked = calculateHoursWorked(timeIn, timeOut, lunchStart, lunchEnd);
+  const hoursWorked = isHoliday ? baseHoursWorked * 2 : baseHoursWorked;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +97,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
         time_out: isPresent ? timeOut : null,
         lunch_start: isPresent && lunchStart ? lunchStart : null,
         lunch_end: isPresent && lunchEnd ? lunchEnd : null,
+        is_holiday: isPresent ? isHoliday : false,
         hours_worked: isPresent ? hoursWorked : 0,
         accomplishment: accomplishment || null,
       };
@@ -125,6 +130,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
       setTimeOut('');
       setLunchStart('');
       setLunchEnd('');
+      setIsHoliday(false);
       setAccomplishment('');
       setIsPresent(true);
       setIsLoading(false);
@@ -235,6 +241,27 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                 </div>
               </div>
 
+              <div className="flex items-center space-x-3 rounded-[1.25rem] border border-amber-200 bg-amber-50/80 p-4">
+                <Checkbox
+                  id="holiday"
+                  checked={isHoliday}
+                  onCheckedChange={(checked) => setIsHoliday(checked as boolean)}
+                  className="h-5 w-5"
+                />
+                <label
+                  htmlFor="holiday"
+                  className="flex flex-1 cursor-pointer items-start gap-3 text-sm font-medium leading-none text-slate-900"
+                >
+                  <BadgeAlert className="mt-0.5 h-4 w-4 text-amber-600" />
+                  <span>
+                    Mark as Holiday
+                    <span className="mt-1 block text-xs font-normal text-slate-600">
+                      If checked, this log will count as double hours.
+                    </span>
+                  </span>
+                </label>
+              </div>
+
               {timeIn && timeOut && (
                 <div className="flex items-center justify-between rounded-[1.25rem] bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg shadow-emerald-700/20">
                   <div>
@@ -245,6 +272,11 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                         ? `Lunch break from ${lunchStart} to ${lunchEnd} is excluded.`
                         : 'No lunch break deduction is applied unless you enter lunch times.'}
                     </p>
+                    {isHoliday && (
+                      <p className="mt-1 text-xs text-white/85">
+                        Holiday is enabled, so {baseHoursWorked.toFixed(2)} base hours become {hoursWorked.toFixed(2)} credited hours.
+                      </p>
+                    )}
                   </div>
                   <p className="text-2xl font-semibold text-white">{hoursWorked.toFixed(2)}h</p>
                 </div>

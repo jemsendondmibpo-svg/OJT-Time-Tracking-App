@@ -127,6 +127,7 @@ export function Dashboard() {
           timeOut: log.time_out,
           lunchStart: log.lunch_start,
           lunchEnd: log.lunch_end,
+          isHoliday: log.is_holiday ?? false,
           hoursWorked: log.hours_worked,
           accomplishment: log.accomplishment,
           photoUrl: log.photo_url,

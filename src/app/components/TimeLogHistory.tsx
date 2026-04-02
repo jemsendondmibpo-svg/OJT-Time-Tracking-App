@@ -94,6 +94,11 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         Absent
                       </Badge>
                     )}
+                    {log.isHoliday && (
+                      <Badge className="bg-amber-500 text-white hover:bg-amber-600 text-xs font-medium">
+                        Holiday
+                      </Badge>
+                    )}
 
                     <Dialog>
                       <DialogTrigger asChild>
@@ -141,6 +146,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                                     <span className="text-sm font-semibold text-slate-900">
                                       {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}
                                     </span>
+                                  </div>
+                                )}
+                                {log.isHoliday && (
+                                  <div className="mb-3 flex items-center justify-between">
+                                    <span className="text-sm font-medium text-slate-600">Holiday Rate</span>
+                                    <span className="text-sm font-semibold text-amber-700">Double hours applied</span>
                                   </div>
                                 )}
                                 <div className="flex items-center justify-between">
@@ -222,6 +233,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4 text-amber-600" />
                           <span>Lunch: {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}</span>
+                        </div>
+                      )}
+                      {log.isHoliday && (
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4 text-amber-600" />
+                          <span>Holiday double hours</span>
                         </div>
                       )}
                       <div className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
