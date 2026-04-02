@@ -99,6 +99,11 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         Holiday
                       </Badge>
                     )}
+                    {log.isOvertime && (
+                      <Badge className="bg-violet-500 text-white hover:bg-violet-600 text-xs font-medium">
+                        Overtime
+                      </Badge>
+                    )}
 
                     <Dialog>
                       <DialogTrigger asChild>
@@ -145,6 +150,14 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                                     <span className="text-sm font-medium text-slate-600">Lunch Break</span>
                                     <span className="text-sm font-semibold text-slate-900">
                                       {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}
+                                    </span>
+                                  </div>
+                                )}
+                                {log.isOvertime && (
+                                  <div className="mb-3 flex items-center justify-between">
+                                    <span className="text-sm font-medium text-slate-600">Overtime</span>
+                                    <span className="text-sm font-semibold text-violet-700">
+                                      {Number(log.overtimeHours ?? 0).toFixed(2)} hrs
                                     </span>
                                   </div>
                                 )}
@@ -233,6 +246,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4 text-amber-600" />
                           <span>Lunch: {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}</span>
+                        </div>
+                      )}
+                      {log.isOvertime && (
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4 text-violet-600" />
+                          <span>OT: {Number(log.overtimeHours ?? 0).toFixed(2)} hrs</span>
                         </div>
                       )}
                       {log.isHoliday && (

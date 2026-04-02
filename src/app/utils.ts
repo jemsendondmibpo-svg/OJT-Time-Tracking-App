@@ -42,7 +42,7 @@ export const calculateStats = (
   setup: OJTSetup,
   logs: DailyLog[]
 ): CalculatedStats => {
-  // Calculate total hours from logs
+  // Total credited hours include holiday multipliers and overtime as saved in each log.
   const loggedHours = logs.reduce((sum, log) => {
     return sum + (log.isPresent ? log.hoursWorked : 0);
   }, 0);
@@ -51,11 +51,13 @@ export const calculateStats = (
   const remainingHours = Math.max(0, setup.totalRequiredHours - totalHoursCompleted);
   const percentageCompleted = (totalHoursCompleted / setup.totalRequiredHours) * 100;
 
-  // Calculate average daily hours (only present days)
+  // Estimated completion is based on normal working-day pace only.
   const presentLogs = logs.filter(log => log.isPresent);
   const presentDaysCount = presentLogs.length;
   const averageDailyHours = presentDaysCount > 0 
-    ? loggedHours / presentDaysCount 
+    ? presentLogs.reduce((sum, log) => {
+        return sum + calculateHoursWorked(log.timeIn, log.timeOut, log.lunchStart, log.lunchEnd);
+      }, 0) / presentDaysCount
     : 0;
 
   // Calculate days needed to finish

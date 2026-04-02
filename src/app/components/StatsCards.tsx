@@ -84,7 +84,7 @@ export function StatsCards({ stats, totalRequired }: StatsCardsProps) {
           <CardContent className="pt-4 pb-4">
             <div className="space-y-2">
               <div className="flex justify-between items-start">
-                <p className="text-xs text-sky-700 font-medium">Avg Daily Hours</p>
+                <p className="text-xs text-sky-700 font-medium">Avg Normal Day</p>
                 <div className="p-1.5 bg-sky-600 rounded-lg">
                   <TrendingUp className="w-4 h-4 text-white" />
                 </div>
@@ -93,7 +93,7 @@ export function StatsCards({ stats, totalRequired }: StatsCardsProps) {
                 {stats.averageDailyHours.toFixed(1)}
               </p>
               <p className="text-xs text-sky-700">
-                {stats.presentDaysCount} days present
+                Based on regular workdays
               </p>
             </div>
           </CardContent>
