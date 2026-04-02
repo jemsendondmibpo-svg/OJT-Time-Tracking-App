@@ -8,7 +8,18 @@ import { DailyLog, CalendarEvent, OJTSetup } from '../types';
 import { calculateStats } from '../utils';
 import { getCurrentUser, clearCurrentUser } from '../auth-utils';
 import { supabase } from '../supabase-client';
-import { ClipboardList, LogOut, Settings, CalendarDays, Clock, History, Home } from 'lucide-react';
+import {
+  ClipboardList,
+  LogOut,
+  Settings,
+  CalendarDays,
+  Clock,
+  History,
+  Home,
+  Sparkles,
+  Target,
+  TrendingUp,
+} from 'lucide-react';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import {
   DropdownMenu,
@@ -65,13 +76,12 @@ export function Dashboard() {
     try {
       setIsLoading(true);
 
-      // Load setup
       const { data: setupData, error: setupError } = await supabase
         .from('ojt_setup')
         .select('*')
         .eq('user_id', currentUser?.id)
         .maybeSingle();
-      
+
       if (setupError) {
         console.error('Setup load error:', setupError);
         navigate('/setup', { replace: true });
@@ -91,7 +101,6 @@ export function Dashboard() {
       };
       setSetup(mappedSetup);
 
-      // Load logs
       const { data: logsData, error: logsError } = await supabase
         .from('time_logs')
         .select('*')
@@ -112,7 +121,6 @@ export function Dashboard() {
         setLogs(mappedLogs);
       }
 
-      // Load events
       const { data: eventsData, error: eventsError } = await supabase
         .from('calendar_events')
         .select('*')
@@ -137,8 +145,7 @@ export function Dashboard() {
     }
   };
 
-  const handleSaveLog = async (log: DailyLog) => {
-    // Reload data after saving
+  const handleSaveLog = async (_log: DailyLog) => {
     await loadData();
   };
 
@@ -155,7 +162,7 @@ export function Dashboard() {
         return;
       }
 
-      const updatedLogs = logs.filter(log => log.id !== id);
+      const updatedLogs = logs.filter((log) => log.id !== id);
       setLogs(updatedLogs);
       toast.success('Time log deleted');
     } catch (error) {
@@ -219,7 +226,7 @@ export function Dashboard() {
         return;
       }
 
-      const updatedEvents = events.map(e => e.id === event.id ? event : e);
+      const updatedEvents = events.map((e) => (e.id === event.id ? event : e));
       setEvents(updatedEvents);
       toast.success('Event updated');
     } catch (error) {
@@ -241,7 +248,7 @@ export function Dashboard() {
         return;
       }
 
-      const updatedEvents = events.filter(e => e.id !== id);
+      const updatedEvents = events.filter((e) => e.id !== id);
       setEvents(updatedEvents);
       toast.success('Event deleted');
     } catch (error) {
@@ -279,9 +286,9 @@ export function Dashboard() {
 
   if (isLoading || !setup || !currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-teal-600 border-t-transparent"></div>
           <p className="text-slate-600">Loading your dashboard...</p>
         </div>
       </div>
@@ -290,14 +297,13 @@ export function Dashboard() {
 
   const stats = calculateStats(setup, logs);
 
-  const getInitials = (name: string) => {
-    return name
+  const getInitials = (name: string) =>
+    name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .slice(0, 2);
-  };
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
@@ -306,48 +312,45 @@ export function Dashboard() {
     return 'Good Evening';
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
-  };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
-  };
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-20 md:pb-6">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-20">
+    <div className="min-h-screen bg-transparent pb-20 md:pb-6">
+      <div className="sticky top-0 z-20 border-b border-white/70 bg-white/75 shadow-sm backdrop-blur-xl">
         <div className="px-4 py-4 md:px-6 md:py-5">
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="mx-auto flex max-w-7xl items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-600 rounded-lg shadow-sm">
-                <ClipboardList className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              <div className="rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-600 p-2 shadow-lg shadow-teal-700/20">
+                <ClipboardList className="h-5 w-5 text-white md:h-6 md:w-6" />
               </div>
               <div>
-                <h1 className="text-lg md:text-2xl font-semibold text-slate-900">
+                <h1 className="text-lg font-semibold text-slate-900 md:text-2xl">
                   OJT Time Tracker
                 </h1>
-                <p className="text-xs md:text-sm text-slate-600 hidden sm:block">
+                <p className="hidden text-xs text-slate-600 sm:block md:text-sm">
                   Track your internship progress
                 </p>
               </div>
             </div>
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full">
-                  <Avatar className="h-9 w-9 md:h-10 md:w-10 border-2 border-blue-200">
-                    <AvatarFallback className="bg-blue-600 text-white font-medium text-sm">
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full md:h-10 md:w-10">
+                  <Avatar className="h-9 w-9 border-2 border-teal-200 md:h-10 md:w-10">
+                    <AvatarFallback className="bg-teal-600 text-sm font-medium text-white">
                       {getInitials(currentUser.fullName)}
                     </AvatarFallback>
                   </Avatar>
@@ -362,11 +365,11 @@ export function Dashboard() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowResetDialog(true)}>
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="mr-2 h-4 w-4" />
                   Reset Setup
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600">
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="mr-2 h-4 w-4" />
                   Log Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -375,45 +378,69 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="px-4 py-6 md:px-6 md:py-8 space-y-6 max-w-7xl mx-auto">
-        {/* Welcome Banner with Date and Time - Only show on Home tab */}
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 md:px-6 md:py-8">
         {activeTab === 'home' && (
-          <div className="bg-blue-600 rounded-xl p-6 shadow-lg border border-blue-700">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="overflow-hidden rounded-[2rem] border border-white/60 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_26%),linear-gradient(135deg,_#0f766e_0%,_#0f5c8d_55%,_#172554_100%)] p-6 shadow-[0_30px_80px_-36px_rgba(15,23,42,0.7)]">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch lg:justify-between">
               <div className="flex-1">
-                <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2">
-                  {getGreeting()}, {currentUser.fullName.split(' ')[0]} 👋
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white/85">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Progress command center
+                </div>
+                <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
+                  {getGreeting()}, {currentUser.fullName.split(' ')[0]}
                 </h2>
-                <p className="text-sm md:text-base text-blue-100">
-                  Ready to track your progress today?
+                <p className="mt-2 max-w-2xl text-sm text-cyan-50/85 md:text-base">
+                  Keep your internship hours, daily accomplishments, and completion outlook visible in one place.
                 </p>
+
+                <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+                    <div className="mb-2 flex items-center gap-2 text-white/70">
+                      <Target className="h-4 w-4" />
+                      <span className="text-xs uppercase tracking-[0.18em]">Target</span>
+                    </div>
+                    <p className="text-2xl font-semibold text-white">{setup.totalRequiredHours}h</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+                    <div className="mb-2 flex items-center gap-2 text-white/70">
+                      <TrendingUp className="h-4 w-4" />
+                      <span className="text-xs uppercase tracking-[0.18em]">Entries</span>
+                    </div>
+                    <p className="text-2xl font-semibold text-white">{logs.length}</p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+                    <div className="mb-2 flex items-center gap-2 text-white/70">
+                      <CalendarDays className="h-4 w-4" />
+                      <span className="text-xs uppercase tracking-[0.18em]">Events</span>
+                    </div>
+                    <p className="text-2xl font-semibold text-white">{events.length}</p>
+                  </div>
+                </div>
               </div>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+
+              <div className="rounded-[1.5rem] border border-white/20 bg-white/10 p-5 backdrop-blur-sm lg:min-w-[280px]">
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <p className="text-xs font-medium text-blue-100 mb-1">
+                    <p className="mb-1 text-xs font-medium text-cyan-50/75">
                       {formatDate(currentTime)}
                     </p>
-                    <p className="text-xl md:text-2xl font-semibold text-white tabular-nums">
+                    <p className="tabular-nums text-xl font-semibold text-white md:text-2xl">
                       {formatTime(currentTime)}
                     </p>
                   </div>
-                  <div className="hidden md:block w-px h-12 bg-white/30" />
-                  <Clock className="w-8 h-8 md:w-10 md:h-10 text-white/80 hidden md:block" />
+                  <div className="hidden h-12 w-px bg-white/30 md:block" />
+                  <Clock className="hidden h-8 w-8 text-white/80 md:block md:h-10 md:w-10" />
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Stats Section - Only show on Home tab */}
         {activeTab === 'home' && (
           <StatsCards stats={stats} totalRequired={setup.totalRequiredHours} />
         )}
 
-        {/* Content based on active tab */}
         <div className="pb-safe">
           {activeTab === 'log' && <TimeLogForm onSave={handleSaveLog} />}
           {activeTab === 'history' && <TimeLogHistory logs={logs} onDelete={handleDeleteLog} />}
@@ -428,143 +455,132 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 md:hidden shadow-lg">
-        <div className="grid grid-cols-4 h-16">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/70 bg-white/85 shadow-lg backdrop-blur-xl md:hidden">
+        <div className="grid h-16 grid-cols-4">
           <button
             onClick={() => setActiveTab('home')}
             className={`flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'home'
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'home' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
-            <Home className="w-6 h-6" />
+            <Home className="h-6 w-6" />
             <span className="text-xs font-medium">Home</span>
             {activeTab === 'home' && (
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-full" />
+              <div className="absolute top-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-teal-600" />
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('log')}
             className={`flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'log'
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'log' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
-            <Clock className="w-6 h-6" />
+            <Clock className="h-6 w-6" />
             <span className="text-xs font-medium">Log</span>
             {activeTab === 'log' && (
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-full" />
+              <div className="absolute top-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-teal-600" />
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex flex-col items-center justify-center gap-1 transition-all relative ${
-              activeTab === 'history'
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-slate-500 hover:text-slate-700'
+            className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
+              activeTab === 'history' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
             <div className="relative">
-              <History className="w-6 h-6" />
+              <History className="h-6 w-6" />
               {logs.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
                   {logs.length > 9 ? '9+' : logs.length}
                 </span>
               )}
             </div>
             <span className="text-xs font-medium">History</span>
             {activeTab === 'history' && (
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-full" />
+              <div className="absolute top-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-teal-600" />
             )}
           </button>
 
           <button
             onClick={() => setActiveTab('calendar')}
             className={`flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'calendar'
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'calendar' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
-            <CalendarDays className="w-6 h-6" />
+            <CalendarDays className="h-6 w-6" />
             <span className="text-xs font-medium">Calendar</span>
             {activeTab === 'calendar' && (
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-blue-600 rounded-full" />
+              <div className="absolute top-0 left-1/2 h-1 w-12 -translate-x-1/2 rounded-full bg-teal-600" />
             )}
           </button>
         </div>
       </div>
 
-      {/* Desktop Tab Navigation (hidden on mobile) */}
-      <div className="hidden md:block fixed bottom-8 left-1/2 -translate-x-1/2 z-30">
-        <div className="bg-white rounded-full shadow-xl border border-slate-200 px-2 py-2">
+      <div className="fixed bottom-8 left-1/2 z-30 hidden -translate-x-1/2 md:block">
+        <div className="rounded-full border border-white/70 bg-white/85 px-2 py-2 shadow-xl backdrop-blur-xl">
           <div className="flex gap-1">
             <button
               onClick={() => setActiveTab('home')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${
+              className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'home'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <Home className="w-4 h-4" />
+              <Home className="h-4 w-4" />
               <span className="text-sm font-medium">Home</span>
             </button>
 
             <button
               onClick={() => setActiveTab('log')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${
+              className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'log'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <Clock className="w-4 h-4" />
+              <Clock className="h-4 w-4" />
               <span className="text-sm font-medium">Log Time</span>
             </button>
 
             <button
               onClick={() => setActiveTab('history')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all relative ${
+              className={`relative flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'history'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <History className="w-4 h-4" />
+              <History className="h-4 w-4" />
               <span className="text-sm font-medium">History ({logs.length})</span>
             </button>
 
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all ${
+              className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'calendar'
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <CalendarDays className="w-4 h-4" />
+              <CalendarDays className="h-4 w-4" />
               <span className="text-sm font-medium">Calendar</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Logout Confirmation Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <LogOut className="w-5 h-5 text-red-600" />
+              <LogOut className="h-5 w-5 text-red-600" />
               Confirm Logout
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to log out? You'll need to sign in again to access your dashboard.
+              Are you sure you want to log out? You&apos;ll need to sign in again to access your dashboard.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -576,12 +592,11 @@ export function Dashboard() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Reset Setup Confirmation Dialog */}
       <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5 text-amber-600" />
+              <Settings className="h-5 w-5 text-amber-600" />
               Reset Setup
             </AlertDialogTitle>
             <AlertDialogDescription>

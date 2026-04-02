@@ -9,7 +9,7 @@ import { DailyLog } from '../types';
 import { calculateHoursWorked } from '../utils';
 import { supabase } from '../supabase-client';
 import { getCurrentUser } from '../auth-utils';
-import { Clock, Save } from 'lucide-react';
+import { Clock, Save, CalendarClock, NotebookPen } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TimeLogFormProps {
@@ -19,7 +19,7 @@ interface TimeLogFormProps {
 export function TimeLogForm({ onSave }: TimeLogFormProps) {
   const today = new Date().toISOString().split('T')[0];
   const currentUser = getCurrentUser();
-  
+
   const [date, setDate] = useState(today);
   const [timeIn, setTimeIn] = useState('');
   const [timeOut, setTimeOut] = useState('');
@@ -63,7 +63,6 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
         });
 
       if (error) {
-        // Check if it's a duplicate entry
         if (error.code === '23505') {
           toast.error('A log for this date already exists');
         } else {
@@ -74,11 +73,8 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
       }
 
       toast.success('Time log saved successfully!');
-      
-      // Notify parent to refresh data
       onSave({} as DailyLog);
-      
-      // Reset form
+
       setDate(today);
       setTimeIn('');
       setTimeOut('');
@@ -93,10 +89,10 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
   };
 
   return (
-    <Card className="border border-slate-200 bg-white shadow-sm">
-      <CardHeader className="pb-3">
+    <Card className="overflow-hidden border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+      <CardHeader className="border-b border-slate-200/70 bg-[linear-gradient(135deg,_rgba(15,118,110,0.08),_rgba(14,165,233,0.08))] pb-4">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
-          <Clock className="w-5 h-5 text-blue-600" />
+          <Clock className="w-5 h-5 text-teal-600" />
           Log Daily Time
         </CardTitle>
         <CardDescription className="text-sm text-slate-600">
@@ -114,11 +110,11 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
               onChange={(e) => setDate(e.target.value)}
               max={today}
               required
-              className="h-11 border-slate-300 focus:border-blue-600 focus:ring-blue-600"
+              className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
             />
           </div>
 
-          <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center space-x-3 rounded-[1.25rem] border border-teal-200 bg-teal-50/80 p-4">
             <Checkbox
               id="present"
               checked={isPresent}
@@ -135,7 +131,7 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
 
           {isPresent && (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="timeIn" className="text-sm font-medium text-slate-700">Time In *</Label>
                   <Input
@@ -144,7 +140,7 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
                     value={timeIn}
                     onChange={(e) => setTimeIn(e.target.value)}
                     required={isPresent}
-                    className="h-11 border-slate-300 focus:border-blue-600 focus:ring-blue-600"
+                    className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
                   />
                 </div>
 
@@ -156,16 +152,18 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
                     value={timeOut}
                     onChange={(e) => setTimeOut(e.target.value)}
                     required={isPresent}
-                    className="h-11 border-slate-300 focus:border-blue-600 focus:ring-blue-600"
+                    className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
                   />
                 </div>
               </div>
 
               {timeIn && timeOut && (
-                <div className="p-4 bg-emerald-600 rounded-lg shadow-sm">
-                  <p className="text-sm font-medium text-white">
-                    Hours Worked: <span className="text-xl font-semibold">{hoursWorked.toFixed(2)}</span> hours
-                  </p>
+                <div className="flex items-center justify-between rounded-[1.25rem] bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg shadow-emerald-700/20">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.22em] text-white/75">Calculated total</p>
+                    <p className="text-sm font-medium text-white">Hours worked for this entry</p>
+                  </div>
+                  <p className="text-2xl font-semibold text-white">{hoursWorked.toFixed(2)}h</p>
                 </div>
               )}
 
@@ -177,24 +175,38 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
                   value={accomplishment}
                   onChange={(e) => setAccomplishment(e.target.value)}
                   rows={3}
-                  className="resize-none border-slate-300 focus:border-blue-600 focus:ring-blue-600"
+                  className="min-h-28 resize-none rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
                 />
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <NotebookPen className="h-3.5 w-3.5" />
+                  Add a short summary so your history stays useful later.
+                </div>
               </div>
             </>
           )}
 
           {!isPresent && (
-            <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <div className="rounded-[1.25rem] border border-amber-200 bg-amber-50 p-4">
               <p className="text-sm text-orange-900 font-medium">
                 This day will be marked as absent. No hours will be recorded.
               </p>
             </div>
           )}
 
-          <Button type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
-            <Save className="w-4 h-4 mr-2" />
-            Save Time Log
-          </Button>
+          <div className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/80 p-3">
+            <div className="mb-3 flex items-center gap-2 text-sm text-slate-600">
+              <CalendarClock className="h-4 w-4 text-teal-600" />
+              Save today&apos;s attendance and refresh your dashboard instantly.
+            </div>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-700/20 hover:from-teal-700 hover:to-cyan-700"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isLoading ? 'Saving...' : 'Save Time Log'}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>

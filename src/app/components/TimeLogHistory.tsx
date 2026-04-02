@@ -23,7 +23,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './ui/alert-dialog';
-import { useState } from 'react';
 
 interface TimeLogHistoryProps {
   logs: DailyLog[];
@@ -32,7 +31,7 @@ interface TimeLogHistoryProps {
 }
 
 export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) {
-  const sortedLogs = [...logs].sort((a, b) => 
+  const sortedLogs = [...logs].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
@@ -55,13 +54,11 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
-  const [selectedLog, setSelectedLog] = useState<DailyLog | null>(null);
-
   return (
-    <Card className="border border-slate-200 bg-white shadow-sm">
-      <CardHeader className="pb-3">
+    <Card className="overflow-hidden border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+      <CardHeader className="border-b border-slate-200/70 bg-[linear-gradient(135deg,_rgba(15,118,110,0.06),_rgba(245,158,11,0.08))] pb-4">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
-          <FileText className="w-5 h-5 text-indigo-600" />
+          <FileText className="w-5 h-5 text-teal-600" />
           Time Log History
         </CardTitle>
         <CardDescription className="text-sm text-slate-600">
@@ -70,21 +67,21 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
       </CardHeader>
       <CardContent>
         {logs.length === 0 ? (
-          <div className="text-center py-12 text-slate-500">
-            <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p className="text-sm">No time logs yet. Start by logging your daily time!</p>
+          <div className="py-12 text-center text-slate-500">
+            <Calendar className="mx-auto mb-3 h-12 w-12 opacity-50" />
+            <p className="text-sm">No time logs yet. Start by logging your daily time.</p>
           </div>
         ) : (
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+          <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-1">
             {sortedLogs.map((log) => (
               <div
                 key={log.id}
-                className="p-4 border border-slate-200 rounded-lg bg-white hover:border-indigo-300 hover:shadow-sm transition-all"
+                className="rounded-[1.25rem] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(248,250,252,0.9))] p-4 transition-all hover:border-teal-200 hover:shadow-md"
               >
-                <div className="flex items-start justify-between mb-3 gap-2">
-                  <div className="flex items-center gap-2 flex-1">
-                    <Calendar className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                    <span className="font-medium text-sm text-slate-900">{formatDate(log.date)}</span>
+                <div className="mb-3 flex items-start justify-between gap-2">
+                  <div className="flex flex-1 items-center gap-2">
+                    <Calendar className="h-4 w-4 flex-shrink-0 text-teal-600" />
+                    <span className="text-sm font-medium text-slate-900">{formatDate(log.date)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {log.isPresent ? (
@@ -96,18 +93,17 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         Absent
                       </Badge>
                     )}
-                    
-                    {/* View Dialog */}
+
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 flex-shrink-0 hover:bg-indigo-50">
-                          <Eye className="w-4 h-4 text-indigo-600" />
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 flex-shrink-0 hover:bg-teal-50">
+                          <Eye className="h-4 w-4 text-teal-600" />
                         </Button>
                       </DialogTrigger>
                       <DialogContent className="max-w-md">
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2">
-                            <Calendar className="w-5 h-5 text-indigo-600" />
+                            <Calendar className="h-5 w-5 text-teal-600" />
                             Time Log Details
                           </DialogTitle>
                           <DialogDescription>
@@ -115,12 +111,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                           </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
-                          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                            <div className="flex items-center justify-between mb-3">
+                          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                            <div className="mb-3 flex items-center justify-between">
                               <span className="text-sm font-medium text-slate-600">Date</span>
                               <span className="text-sm font-semibold text-slate-900">{formatDate(log.date)}</span>
                             </div>
-                            <div className="flex items-center justify-between mb-3">
+                            <div className="mb-3 flex items-center justify-between">
                               <span className="text-sm font-medium text-slate-600">Status</span>
                               {log.isPresent ? (
                                 <Badge className="bg-emerald-600">Present</Badge>
@@ -130,11 +126,11 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                             </div>
                             {log.isPresent && (
                               <>
-                                <div className="flex items-center justify-between mb-3">
+                                <div className="mb-3 flex items-center justify-between">
                                   <span className="text-sm font-medium text-slate-600">Time In</span>
                                   <span className="text-sm font-semibold text-slate-900">{formatTime(log.timeIn)}</span>
                                 </div>
-                                <div className="flex items-center justify-between mb-3">
+                                <div className="mb-3 flex items-center justify-between">
                                   <span className="text-sm font-medium text-slate-600">Time Out</span>
                                   <span className="text-sm font-semibold text-slate-900">{formatTime(log.timeOut)}</span>
                                 </div>
@@ -147,15 +143,15 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                           </div>
                           {log.accomplishment && (
                             <div>
-                              <h4 className="text-sm font-semibold text-slate-900 mb-2">Daily Accomplishment</h4>
-                              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                                <p className="text-sm text-slate-700 leading-relaxed">{log.accomplishment}</p>
+                              <h4 className="mb-2 text-sm font-semibold text-slate-900">Daily Accomplishment</h4>
+                              <div className="rounded-xl border border-teal-200 bg-teal-50 p-4">
+                                <p className="text-sm leading-relaxed text-slate-700">{log.accomplishment}</p>
                               </div>
                             </div>
                           )}
                           {log.photoUrl && (
                             <div>
-                              <h4 className="text-sm font-semibold text-slate-900 mb-2">Attached Photo</h4>
+                              <h4 className="mb-2 text-sm font-semibold text-slate-900">Attached Photo</h4>
                               <img src={log.photoUrl} alt="Log attachment" className="w-full rounded-lg border border-slate-200" />
                             </div>
                           )}
@@ -166,23 +162,21 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                       </DialogContent>
                     </Dialog>
 
-                    {/* Edit Button - Note: Edit functionality to be implemented */}
                     {onEdit && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         className="h-8 w-8 p-0 flex-shrink-0 hover:bg-blue-50"
                         onClick={() => onEdit(log)}
                       >
-                        <Pencil className="w-4 h-4 text-blue-600" />
+                        <Pencil className="h-4 w-4 text-blue-600" />
                       </Button>
                     )}
 
-                    {/* Delete Dialog */}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 flex-shrink-0 hover:bg-red-50">
-                          <Trash2 className="w-4 h-4 text-red-600" />
+                          <Trash2 className="h-4 w-4 text-red-600" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent className="max-w-md">
@@ -203,32 +197,30 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                   </div>
                 </div>
 
-                {log.isPresent && (
+                {log.isPresent ? (
                   <>
-                    <div className="flex items-center gap-3 text-sm text-slate-700 mb-2 flex-wrap">
+                    <div className="mb-2 flex flex-wrap items-center gap-3 text-sm text-slate-700">
                       <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-blue-600" />
+                        <Clock className="h-4 w-4 text-blue-600" />
                         <span>In: {formatTime(log.timeIn)}</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-blue-600" />
+                        <Clock className="h-4 w-4 text-blue-600" />
                         <span>Out: {formatTime(log.timeOut)}</span>
                       </div>
-                      <div className="font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded text-xs">
+                      <div className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                         {log.hoursWorked.toFixed(2)} hrs
                       </div>
                     </div>
 
                     {log.accomplishment && (
-                      <div className="mt-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <p className="text-sm text-slate-700 leading-relaxed">{log.accomplishment}</p>
+                      <div className="mt-2 rounded-xl border border-slate-200 bg-slate-50/80 p-3">
+                        <p className="text-sm leading-relaxed text-slate-700">{log.accomplishment}</p>
                       </div>
                     )}
                   </>
-                )}
-
-                {!log.isPresent && (
-                  <p className="text-sm text-slate-500 italic">
+                ) : (
+                  <p className="text-sm italic text-slate-500">
                     No time recorded (marked absent)
                   </p>
                 )}

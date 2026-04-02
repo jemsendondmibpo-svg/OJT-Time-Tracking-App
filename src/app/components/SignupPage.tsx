@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { supabase } from '../supabase-client';
-import { GraduationCap, Mail, Lock, User, UserPlus, Eye, EyeOff, Sparkles, Shield, CheckCircle2 } from 'lucide-react';
+import { GraduationCap, Mail, Lock, User, UserPlus, Eye, EyeOff, Sparkles, Shield, CheckCircle2, Layers3 } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 
 export function SignupPage() {
@@ -36,6 +35,20 @@ export function SignupPage() {
   };
 
   const passwordStrength = getPasswordStrength(password);
+
+  const getSignupErrorMessage = (message: string) => {
+    const normalized = message.toLowerCase();
+
+    if (normalized.includes('email rate limit exceeded')) {
+      return 'Too many signup emails were requested. Wait a few minutes, or disable email confirmation in Supabase Authentication settings.';
+    }
+
+    if (normalized.includes('user already registered')) {
+      return 'That email is already registered. Try signing in instead.';
+    }
+
+    return message;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +89,7 @@ export function SignupPage() {
         toast({
           variant: 'destructive',
           title: 'Signup Failed',
-          description: authError.message,
+          description: getSignupErrorMessage(authError.message),
         });
         setIsLoading(false);
         return;
@@ -130,35 +143,48 @@ export function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-transparent">
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-2xl mb-4 shadow-lg shadow-indigo-600/20">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-[1.25rem] mb-4 shadow-lg shadow-amber-700/20 bg-gradient-to-br from-amber-500 to-orange-500">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Create Account</h1>
-            <p className="text-base text-slate-600">Start tracking your OJT hours today</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/80 bg-white/80 px-3 py-1 text-xs font-medium text-amber-700 shadow-sm backdrop-blur-sm">
+              <Sparkles className="w-3.5 h-3.5" />
+              Clean setup in minutes
+            </div>
+            <h1 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-2">Create Account</h1>
+            <p className="text-base text-slate-600">Start tracking your OJT hours with a more polished and organized workspace.</p>
           </div>
 
           {/* Signup Form */}
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150">
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="rounded-[1.75rem] border border-white/70 bg-white/80 p-6 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.45)] backdrop-blur-xl md:p-8">
+              <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-slate-900">Everything in one workflow</p>
+                  <p className="text-xs text-slate-500">Setup, logging, history, and calendar support</p>
+                </div>
+                <Layers3 className="h-9 w-9 rounded-xl bg-amber-100 p-2 text-amber-700" />
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-sm font-medium text-slate-700">
                   Full Name
                 </Label>
                 <div className="relative group">
-                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-indigo-600" />
+                  <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-amber-500" />
                   <Input
                     id="fullName"
                     type="text"
                     placeholder="John Doe"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="pl-11 h-12 border-2 border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10 transition-all duration-200 rounded-xl"
+                    className="pl-11 h-12 rounded-2xl border-slate-200/90 bg-white/90 shadow-sm focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200"
                     required
                   />
                 </div>
@@ -169,14 +195,14 @@ export function SignupPage() {
                   Email Address
                 </Label>
                 <div className="relative group">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-indigo-600" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-amber-500" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="your.email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-11 h-12 border-2 border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10 transition-all duration-200 rounded-xl"
+                    className="pl-11 h-12 rounded-2xl border-slate-200/90 bg-white/90 shadow-sm focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200"
                     required
                   />
                 </div>
@@ -187,14 +213,14 @@ export function SignupPage() {
                   Password
                 </Label>
                 <div className="relative group">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-indigo-600" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-amber-500" />
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="At least 6 characters"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-11 pr-11 h-12 border-2 border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10 transition-all duration-200 rounded-xl"
+                    className="pl-11 pr-11 h-12 rounded-2xl border-slate-200/90 bg-white/90 shadow-sm focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200"
                     required
                   />
                   <button
@@ -232,14 +258,14 @@ export function SignupPage() {
                   Confirm Password
                 </Label>
                 <div className="relative group">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-indigo-600" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 transition-colors group-focus-within:text-amber-500" />
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirm your password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-11 pr-11 h-12 border-2 border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/10 transition-all duration-200 rounded-xl"
+                    className="pl-11 pr-11 h-12 rounded-2xl border-slate-200/90 bg-white/90 shadow-sm focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 transition-all duration-200"
                     required
                   />
                   <button
@@ -267,7 +293,7 @@ export function SignupPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 hover:shadow-xl hover:shadow-indigo-600/40 transition-all duration-200 rounded-xl font-medium text-base"
+                className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-700/25 transition-all duration-200 hover:from-amber-600 hover:to-orange-600 hover:shadow-xl hover:shadow-amber-700/35 font-medium text-base"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -282,28 +308,29 @@ export function SignupPage() {
                   </span>
                 )}
               </Button>
-            </form>
+              </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-slate-600">
-                Already have an account?{' '}
-                <Link 
-                  to="/login" 
-                  className="font-semibold text-indigo-600 hover:text-indigo-700 hover:underline transition-colors"
-                >
-                  Sign in
-                </Link>
-              </p>
+              <div className="mt-6 text-center">
+                <p className="text-sm text-slate-600">
+                  Already have an account?{' '}
+                  <Link 
+                    to="/login" 
+                    className="font-semibold text-amber-700 hover:text-amber-800 hover:underline transition-colors"
+                  >
+                    Sign in
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right Side - Decorative */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-purple-700 to-purple-800 p-12 items-center justify-center relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_28%),linear-gradient(145deg,_#f59e0b_0%,_#f97316_48%,_#7c2d12_100%)] p-12 items-center justify-center relative overflow-hidden">
         {/* Decorative circles */}
         <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-20 left-20 w-80 h-80 bg-yellow-200/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
         
         <div className="relative z-10 max-w-lg text-white">
           <div className="mb-8 animate-in fade-in slide-in-from-right-6 duration-700">
@@ -312,10 +339,10 @@ export function SignupPage() {
               <span className="text-sm font-medium">Join Our Community</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-              Start Your Success Journey Today
+              Start organized from day one
             </h2>
-            <p className="text-lg text-purple-100 mb-8">
-              Join hundreds of students successfully managing their internship hours.
+            <p className="text-lg text-orange-50/90 mb-8">
+              Create your account, finish setup quickly, and start logging hours with a much cleaner flow.
             </p>
           </div>
 
@@ -328,7 +355,7 @@ export function SignupPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Quick Setup</h3>
-                  <p className="text-sm text-purple-100">Get started in minutes with our simple onboarding process</p>
+                  <p className="text-sm text-orange-50/80">Get started in minutes with a setup flow that keeps the important choices clear.</p>
                 </div>
               </div>
             </div>
@@ -340,7 +367,7 @@ export function SignupPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Secure & Private</h3>
-                  <p className="text-sm text-purple-100">Your data is encrypted and protected with industry-standard security</p>
+                  <p className="text-sm text-orange-50/80">Your data stays protected while you keep your internship records easy to manage.</p>
                 </div>
               </div>
             </div>
