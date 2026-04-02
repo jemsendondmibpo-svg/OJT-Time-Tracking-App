@@ -76,6 +76,11 @@ export function EventDialog({
       return;
     }
 
+    if (startTime && endTime && endTime <= startTime) {
+      toast.error('End time must be later than start time');
+      return;
+    }
+
     const event: CalendarEvent = {
       id: editingEvent?.id || `event-${Date.now()}`,
       title: title.trim(),

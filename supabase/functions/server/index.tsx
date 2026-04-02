@@ -432,7 +432,15 @@ app.post('/make-server-c77f18a2/events', async (c) => {
       return c.json({ error: authError || 'Unauthorized' }, 401);
     }
 
-    const { title, date, description, color } = await c.req.json();
+    const {
+      title,
+      date,
+      description,
+      startTime,
+      endTime,
+      type,
+      completed,
+    } = await c.req.json();
 
     if (!title || !date) {
       return c.json({ error: 'Title and date are required' }, 400);
@@ -448,7 +456,10 @@ app.post('/make-server-c77f18a2/events', async (c) => {
         title,
         date,
         description,
-        color,
+        start_time: startTime || '09:00',
+        end_time: endTime || '10:00',
+        type: type || 'important',
+        completed: Boolean(completed),
       })
       .select()
       .single();
@@ -474,14 +485,30 @@ app.put('/make-server-c77f18a2/events/:id', async (c) => {
     }
 
     const eventId = c.req.param('id');
-    const { title, date, description, color } = await c.req.json();
+    const {
+      title,
+      date,
+      description,
+      startTime,
+      endTime,
+      type,
+      completed,
+    } = await c.req.json();
 
     const accessToken = c.req.header('Authorization')?.split(' ')[1];
     const supabase = getSupabaseClient(accessToken);
 
     const { data, error } = await supabase
       .from('calendar_events')
-      .update({ title, date, description, color })
+      .update({
+        title,
+        date,
+        description,
+        start_time: startTime,
+        end_time: endTime,
+        type,
+        completed,
+      })
       .eq('id', eventId)
       .eq('user_id', user.id)
       .select()

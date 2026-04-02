@@ -48,6 +48,21 @@ import { toast } from 'sonner';
 
 type TabValue = 'home' | 'log' | 'history' | 'calendar';
 
+const getEventErrorMessage = (error: any, fallback: string) => {
+  const message = error?.message || fallback;
+
+  if (
+    message.includes('start_time') ||
+    message.includes('end_time') ||
+    message.includes('completed') ||
+    message.includes('type')
+  ) {
+    return 'Calendar event fields are missing in Supabase. Run supabase/add_calendar_event_fields.sql first.';
+  }
+
+  return message;
+};
+
 export function Dashboard() {
   const navigate = useNavigate();
   const [currentUser] = useState(() => getCurrentUser());
@@ -218,7 +233,8 @@ export function Dashboard() {
         .single();
 
       if (error || !data) {
-        toast.error('Failed to add event');
+        console.error('Add event error:', error);
+        toast.error(getEventErrorMessage(error, 'Failed to add event'));
         return;
       }
 
@@ -237,7 +253,7 @@ export function Dashboard() {
       toast.success('Event added');
     } catch (error) {
       console.error('Add event error:', error);
-      toast.error('Failed to add event');
+      toast.error(getEventErrorMessage(error, 'Failed to add event'));
     }
   };
 
@@ -260,7 +276,8 @@ export function Dashboard() {
         .single();
 
       if (error || !data) {
-        toast.error('Failed to update event');
+        console.error('Update event error:', error);
+        toast.error(getEventErrorMessage(error, 'Failed to update event'));
         return;
       }
 
@@ -269,7 +286,7 @@ export function Dashboard() {
       toast.success('Event updated');
     } catch (error) {
       console.error('Update event error:', error);
-      toast.error('Failed to update event');
+      toast.error(getEventErrorMessage(error, 'Failed to update event'));
     }
   };
 

@@ -124,7 +124,10 @@ export async function createEvent(event: {
   title: string;
   date: string;
   description?: string;
-  color?: string;
+  startTime?: string;
+  endTime?: string;
+  type?: 'important' | 'meeting' | 'deadline' | 'reminder';
+  completed?: boolean;
 }) {
   return apiCall('/events', {
     method: 'POST',
@@ -138,7 +141,10 @@ export async function updateEvent(
     title?: string;
     date?: string;
     description?: string;
-    color?: string;
+    startTime?: string;
+    endTime?: string;
+    type?: 'important' | 'meeting' | 'deadline' | 'reminder';
+    completed?: boolean;
   }
 ) {
   return apiCall(`/events/${eventId}`, {
