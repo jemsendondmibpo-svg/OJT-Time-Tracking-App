@@ -19,6 +19,10 @@ import {
   Sparkles,
   Target,
   TrendingUp,
+  UserRound,
+  GraduationCap,
+  Building2,
+  BriefcaseBusiness,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import {
@@ -94,6 +98,12 @@ export function Dashboard() {
       }
 
       const mappedSetup: OJTSetup = {
+        internName: setupData.intern_name ?? currentUser.fullName,
+        course: setupData.course ?? '',
+        schoolName: setupData.school_name ?? '',
+        companyName: setupData.company_name ?? '',
+        assignedDepartment: setupData.assigned_department ?? '',
+        immediateSupervisor: setupData.immediate_supervisor ?? '',
         totalRequiredHours: setupData.total_required_hours,
         previousHours: setupData.previous_hours,
         workingDays: setupData.working_days,
@@ -439,6 +449,76 @@ export function Dashboard() {
 
         {activeTab === 'home' && (
           <StatsCards stats={stats} totalRequired={setup.totalRequiredHours} />
+        )}
+
+        {activeTab === 'home' && (
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <UserRound className="h-5 w-5 text-teal-600" />
+                <h3 className="text-base font-semibold text-slate-900">Intern Profile</h3>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Name of Intern</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.internName}</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <GraduationCap className="h-4 w-4" />
+                    <p className="text-xs uppercase tracking-[0.16em]">Course</p>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.course}</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <Building2 className="h-4 w-4" />
+                    <p className="text-xs uppercase tracking-[0.16em]">School Name</p>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.schoolName}</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <Building2 className="h-4 w-4" />
+                    <p className="text-xs uppercase tracking-[0.16em]">Company Name</p>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.companyName}</p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <BriefcaseBusiness className="h-4 w-4" />
+                    <p className="text-xs uppercase tracking-[0.16em]">Assigned Department</p>
+                  </div>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.assignedDepartment}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+              <div className="mb-4 flex items-center gap-2">
+                <Settings className="h-5 w-5 text-amber-600" />
+                <h3 className="text-base font-semibold text-slate-900">Placement Details</h3>
+              </div>
+              <div className="space-y-3">
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
+                  <p className="text-xs uppercase tracking-[0.16em] text-amber-700">Immediate Supervisor</p>
+                  <p className="mt-2 text-sm font-semibold text-amber-950">{setup.immediateSupervisor}</p>
+                </div>
+                <div className="rounded-2xl border border-teal-200 bg-teal-50/70 p-4">
+                  <p className="text-xs uppercase tracking-[0.16em] text-teal-700">Work Schedule</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">
+                    {setup.workingDays.length} working day{setup.workingDays.length === 1 ? '' : 's'} selected
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Starting Baseline</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">
+                    {setup.previousHours.toFixed(1)} previous hour{setup.previousHours === 1 ? '' : 's'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
 
         <div className="pb-safe">

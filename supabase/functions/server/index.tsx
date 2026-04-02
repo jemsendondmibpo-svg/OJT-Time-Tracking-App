@@ -112,9 +112,30 @@ app.post('/make-server-c77f18a2/setup', async (c) => {
       return c.json({ error: authError || 'Unauthorized' }, 401);
     }
 
-    const { totalRequiredHours, previousHours, workingDays, startDate } = await c.req.json();
+    const {
+      internName,
+      course,
+      schoolName,
+      companyName,
+      assignedDepartment,
+      immediateSupervisor,
+      totalRequiredHours,
+      previousHours,
+      workingDays,
+      startDate,
+    } = await c.req.json();
 
-    if (!totalRequiredHours || !workingDays || !startDate) {
+    if (
+      !internName ||
+      !course ||
+      !schoolName ||
+      !companyName ||
+      !assignedDepartment ||
+      !immediateSupervisor ||
+      !totalRequiredHours ||
+      !workingDays ||
+      !startDate
+    ) {
       return c.json({ error: 'Missing required fields' }, 400);
     }
 
@@ -134,6 +155,12 @@ app.post('/make-server-c77f18a2/setup', async (c) => {
       result = await supabase
         .from('ojt_setup')
         .update({
+          intern_name: internName,
+          course,
+          school_name: schoolName,
+          company_name: companyName,
+          assigned_department: assignedDepartment,
+          immediate_supervisor: immediateSupervisor,
           total_required_hours: totalRequiredHours,
           previous_hours: previousHours || 0,
           working_days: workingDays,
@@ -148,6 +175,12 @@ app.post('/make-server-c77f18a2/setup', async (c) => {
         .from('ojt_setup')
         .insert({
           user_id: user.id,
+          intern_name: internName,
+          course,
+          school_name: schoolName,
+          company_name: companyName,
+          assigned_department: assignedDepartment,
+          immediate_supervisor: immediateSupervisor,
           total_required_hours: totalRequiredHours,
           previous_hours: previousHours || 0,
           working_days: workingDays,

@@ -1,4 +1,10 @@
 export interface OJTSetup {
+  internName: string;
+  course: string;
+  schoolName: string;
+  companyName: string;
+  assignedDepartment: string;
+  immediateSupervisor: string;
   totalRequiredHours: number;
   previousHours: number;
   workingDays: number[]; // 0 = Sunday, 1 = Monday, etc.

@@ -25,6 +25,12 @@ export function SetupForm() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentUser] = useState(() => getCurrentUser());
+  const [internName, setInternName] = useState('');
+  const [course, setCourse] = useState('');
+  const [schoolName, setSchoolName] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [assignedDepartment, setAssignedDepartment] = useState('');
+  const [immediateSupervisor, setImmediateSupervisor] = useState('');
   const [totalRequiredHours, setTotalRequiredHours] = useState('');
   const [previousHours, setPreviousHours] = useState('');
   const [workingDays, setWorkingDays] = useState<number[]>([1, 2, 3, 4, 5]); // Default: Mon-Fri
@@ -96,6 +102,12 @@ export function SetupForm() {
         .from('ojt_setup')
         .insert({
           user_id: currentUser?.id,
+          intern_name: internName,
+          course,
+          school_name: schoolName,
+          company_name: companyName,
+          assigned_department: assignedDepartment,
+          immediate_supervisor: immediateSupervisor,
           total_required_hours: Number(totalRequiredHours),
           previous_hours: Number(previousHours) || 0,
           working_days: workingDays,
@@ -130,6 +142,12 @@ export function SetupForm() {
   };
 
   const isValid = 
+    internName.trim() &&
+    course.trim() &&
+    schoolName.trim() &&
+    companyName.trim() &&
+    assignedDepartment.trim() &&
+    immediateSupervisor.trim() &&
     totalRequiredHours && 
     Number(totalRequiredHours) > 0 && 
     workingDays.length > 0;
@@ -184,6 +202,96 @@ export function SetupForm() {
               </CardHeader>
               <CardContent className="pt-0">
                 <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="internName" className="text-sm font-medium text-slate-700">
+                  Name of Intern *
+                </Label>
+                <Input
+                  id="internName"
+                  type="text"
+                  placeholder="e.g., Juan Dela Cruz"
+                  value={internName}
+                  onChange={(e) => setInternName(e.target.value)}
+                  required
+                  className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="course" className="text-sm font-medium text-slate-700">
+                  Course *
+                </Label>
+                <Input
+                  id="course"
+                  type="text"
+                  placeholder="e.g., BS Information Technology"
+                  value={course}
+                  onChange={(e) => setCourse(e.target.value)}
+                  required
+                  className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="schoolName" className="text-sm font-medium text-slate-700">
+                  School Name *
+                </Label>
+                <Input
+                  id="schoolName"
+                  type="text"
+                  placeholder="e.g., Example State University"
+                  value={schoolName}
+                  onChange={(e) => setSchoolName(e.target.value)}
+                  required
+                  className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="companyName" className="text-sm font-medium text-slate-700">
+                  Company Name *
+                </Label>
+                <Input
+                  id="companyName"
+                  type="text"
+                  placeholder="e.g., ABC Corporation"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  required
+                  className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="assignedDepartment" className="text-sm font-medium text-slate-700">
+                  Assigned Department *
+                </Label>
+                <Input
+                  id="assignedDepartment"
+                  type="text"
+                  placeholder="e.g., IT Department"
+                  value={assignedDepartment}
+                  onChange={(e) => setAssignedDepartment(e.target.value)}
+                  required
+                  className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="immediateSupervisor" className="text-sm font-medium text-slate-700">
+                  Immediate Supervisor *
+                </Label>
+                <Input
+                  id="immediateSupervisor"
+                  type="text"
+                  placeholder="e.g., Maria Santos"
+                  value={immediateSupervisor}
+                  onChange={(e) => setImmediateSupervisor(e.target.value)}
+                  required
+                  className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="totalHours" className="text-sm font-medium text-slate-700">
                   Total Required Hours *
