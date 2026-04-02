@@ -66,7 +66,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
           View, edit, and manage your daily time entries
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 pb-5 pt-5 sm:px-6">
         {logs.length === 0 ? (
           <div className="py-12 text-center text-slate-500">
             <Calendar className="mx-auto mb-3 h-12 w-12 opacity-50" />
@@ -79,12 +79,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                 key={log.id}
                 className="rounded-[1.25rem] border border-slate-200/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(248,250,252,0.9))] p-4 transition-all hover:border-teal-200 hover:shadow-md"
               >
-                <div className="mb-3 flex items-start justify-between gap-2">
-                  <div className="flex flex-1 items-center gap-2">
+                <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
                     <Calendar className="h-4 w-4 flex-shrink-0 text-teal-600" />
                     <span className="text-sm font-medium text-slate-900">{formatDate(log.date)}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {log.isPresent ? (
                       <Badge variant="default" className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-medium">
                         Present
@@ -111,7 +111,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                           <Eye className="h-4 w-4 text-teal-600" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-md">
+                      <DialogContent className="max-h-[88vh] w-[95vw] max-w-md overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2">
                             <Calendar className="h-5 w-5 text-teal-600" />
@@ -123,11 +123,11 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                            <div className="mb-3 flex items-center justify-between">
+                            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                               <span className="text-sm font-medium text-slate-600">Date</span>
                               <span className="text-sm font-semibold text-slate-900">{formatDate(log.date)}</span>
                             </div>
-                            <div className="mb-3 flex items-center justify-between">
+                            <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                               <span className="text-sm font-medium text-slate-600">Status</span>
                               {log.isPresent ? (
                                 <Badge className="bg-emerald-600">Present</Badge>
@@ -137,16 +137,16 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                             </div>
                             {log.isPresent && (
                               <>
-                                <div className="mb-3 flex items-center justify-between">
+                                <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                   <span className="text-sm font-medium text-slate-600">Time In</span>
                                   <span className="text-sm font-semibold text-slate-900">{formatTime(log.timeIn)}</span>
                                 </div>
-                                <div className="mb-3 flex items-center justify-between">
+                                <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                   <span className="text-sm font-medium text-slate-600">Time Out</span>
                                   <span className="text-sm font-semibold text-slate-900">{formatTime(log.timeOut)}</span>
                                 </div>
                                 {log.lunchStart && log.lunchEnd && (
-                                  <div className="mb-3 flex items-center justify-between">
+                                  <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                     <span className="text-sm font-medium text-slate-600">Lunch Break</span>
                                     <span className="text-sm font-semibold text-slate-900">
                                       {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}
@@ -154,7 +154,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                                   </div>
                                 )}
                                 {log.isOvertime && (
-                                  <div className="mb-3 flex items-center justify-between">
+                                  <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                     <span className="text-sm font-medium text-slate-600">Overtime</span>
                                     <span className="text-sm font-semibold text-violet-700">
                                       {Number(log.overtimeHours ?? 0).toFixed(2)} hrs
@@ -162,12 +162,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                                   </div>
                                 )}
                                 {log.isHoliday && (
-                                  <div className="mb-3 flex items-center justify-between">
+                                  <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                     <span className="text-sm font-medium text-slate-600">Holiday Rate</span>
                                     <span className="text-sm font-semibold text-amber-700">Double hours applied</span>
                                   </div>
                                 )}
-                                <div className="flex items-center justify-between">
+                                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                   <span className="text-sm font-medium text-slate-600">Hours Worked</span>
                                   <span className="text-sm font-bold text-emerald-700">{log.hoursWorked.toFixed(2)} hrs</span>
                                 </div>
@@ -189,9 +189,9 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                             </div>
                           )}
                         </div>
-                        <DialogFooter>
+                        <DialogFooter className="sm:justify-end">
                           <DialogClose asChild>
-                            <Button variant="outline">Close</Button>
+                            <Button variant="outline" className="w-full sm:w-auto">Close</Button>
                           </DialogClose>
                         </DialogFooter>
                       </DialogContent>

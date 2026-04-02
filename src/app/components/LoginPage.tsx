@@ -80,9 +80,9 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-transparent">
+    <div className="min-h-screen overflow-x-hidden bg-transparent lg:flex">
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12">
+      <div className="flex w-full items-center justify-center px-4 py-8 sm:px-6 md:p-12 lg:w-1/2">
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -93,14 +93,14 @@ export function LoginPage() {
               <Sparkles className="w-3.5 h-3.5" />
               Built for internship tracking
             </div>
-            <h1 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-2">Welcome Back</h1>
-            <p className="text-base text-slate-600">Sign in to continue your OJT progress with a clearer, faster dashboard.</p>
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">Welcome Back</h1>
+            <p className="mt-2 text-sm text-slate-600 sm:text-base">Sign in to continue your OJT progress with a clearer, faster dashboard.</p>
           </div>
 
           {/* Login Card */}
           <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150">
             <div className="rounded-[1.75rem] border border-white/70 bg-white/80 p-6 shadow-[0_24px_70px_-36px_rgba(15,23,42,0.45)] backdrop-blur-xl md:p-8">
-              <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3">
+              <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-slate-900">Daily tracking hub</p>
                   <p className="text-xs text-slate-500">Hours, logs, and milestones in one place</p>
@@ -146,6 +146,7 @@ export function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -188,7 +189,7 @@ export function LoginPage() {
       </div>
 
       {/* Right Side - Decorative */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_28%),linear-gradient(145deg,_#0f766e_0%,_#0f5c8d_54%,_#162f43_100%)] p-12 items-center justify-center relative overflow-hidden">
+      <div className="relative hidden items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_transparent_28%),linear-gradient(145deg,_#0f766e_0%,_#0f5c8d_54%,_#162f43_100%)] p-12 lg:flex lg:w-1/2">
         {/* Decorative circles */}
         <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 left-20 w-80 h-80 bg-amber-300/15 rounded-full blur-3xl animate-pulse delay-1000"></div>

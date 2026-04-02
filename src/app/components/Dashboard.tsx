@@ -149,7 +149,10 @@ export function Dashboard() {
           title: event.title,
           date: event.date,
           description: event.description,
-          color: event.color,
+          startTime: event.start_time ?? '09:00',
+          endTime: event.end_time ?? '10:00',
+          type: event.type ?? 'important',
+          completed: event.completed ?? false,
         }));
         setEvents(mappedEvents);
       }
@@ -206,7 +209,10 @@ export function Dashboard() {
           title: event.title,
           date: event.date,
           description: event.description,
-          color: event.color,
+          start_time: event.startTime,
+          end_time: event.endTime,
+          type: event.type,
+          completed: event.completed,
         })
         .select()
         .single();
@@ -221,7 +227,10 @@ export function Dashboard() {
         title: data.title,
         date: data.date,
         description: data.description,
-        color: data.color,
+        startTime: data.start_time ?? event.startTime,
+        endTime: data.end_time ?? event.endTime,
+        type: data.type ?? event.type,
+        completed: data.completed ?? event.completed,
       };
 
       setEvents([...events, mappedEvent]);
@@ -240,7 +249,10 @@ export function Dashboard() {
           title: event.title,
           date: event.date,
           description: event.description,
-          color: event.color,
+          start_time: event.startTime,
+          end_time: event.endTime,
+          type: event.type,
+          completed: event.completed,
         })
         .eq('id', event.id)
         .eq('user_id', currentUser?.id)
@@ -354,16 +366,16 @@ export function Dashboard() {
     });
 
   return (
-    <div className="min-h-screen bg-transparent pb-20 md:pb-6">
+    <div className="min-h-screen overflow-x-hidden bg-transparent pb-20 md:pb-6">
       <div className="sticky top-0 z-20 border-b border-white/70 bg-white/75 shadow-sm backdrop-blur-xl">
         <div className="px-4 py-4 md:px-6 md:py-5">
-          <div className="mx-auto flex max-w-7xl items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               <div className="rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-600 p-2 shadow-lg shadow-teal-700/20">
                 <ClipboardList className="h-5 w-5 text-white md:h-6 md:w-6" />
               </div>
-              <div>
-                <h1 className="text-lg font-semibold text-slate-900 md:text-2xl">
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-semibold text-slate-900 md:text-2xl">
                   OJT Time Tracker
                 </h1>
                 <p className="hidden text-xs text-slate-600 sm:block md:text-sm">
@@ -406,7 +418,7 @@ export function Dashboard() {
 
       <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 md:px-6 md:py-8">
         {activeTab === 'home' && (
-          <div className="overflow-hidden rounded-[2rem] border border-white/60 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_26%),linear-gradient(135deg,_#0f766e_0%,_#0f5c8d_55%,_#172554_100%)] p-6 shadow-[0_30px_80px_-36px_rgba(15,23,42,0.7)]">
+          <div className="overflow-hidden rounded-[2rem] border border-white/60 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.18),_transparent_26%),linear-gradient(135deg,_#0f766e_0%,_#0f5c8d_55%,_#172554_100%)] p-5 shadow-[0_30px_80px_-36px_rgba(15,23,42,0.7)] sm:p-6">
             <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch lg:justify-between">
               <div className="flex-1">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white/85">
@@ -445,9 +457,9 @@ export function Dashboard() {
                 </div>
               </div>
 
-              <div className="rounded-[1.5rem] border border-white/20 bg-white/10 p-5 backdrop-blur-sm lg:min-w-[280px]">
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
+              <div className="rounded-[1.5rem] border border-white/20 bg-white/10 p-4 backdrop-blur-sm sm:p-5 lg:min-w-[280px]">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between lg:flex-col lg:items-stretch">
+                  <div className="sm:text-right lg:text-left">
                     <p className="mb-1 text-xs font-medium text-cyan-50/75">
                       {formatDate(currentTime)}
                     </p>
@@ -455,8 +467,8 @@ export function Dashboard() {
                       {formatTime(currentTime)}
                     </p>
                   </div>
-                  <div className="hidden h-12 w-px bg-white/30 md:block" />
-                  <Clock className="hidden h-8 w-8 text-white/80 md:block md:h-10 md:w-10" />
+                  <div className="hidden h-12 w-px bg-white/30 sm:block lg:hidden" />
+                  <Clock className="h-8 w-8 text-white/80 sm:block md:h-10 md:w-10" />
                 </div>
               </div>
             </div>
@@ -477,35 +489,35 @@ export function Dashboard() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                   <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Name of Intern</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.internName}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.internName}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                   <div className="flex items-center gap-2 text-slate-500">
                     <GraduationCap className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">Course</p>
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.course}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.course}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                   <div className="flex items-center gap-2 text-slate-500">
                     <Building2 className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">School Name</p>
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.schoolName}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.schoolName}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                   <div className="flex items-center gap-2 text-slate-500">
                     <Building2 className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">Company Name</p>
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.companyName}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.companyName}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
                   <div className="flex items-center gap-2 text-slate-500">
                     <BriefcaseBusiness className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">Assigned Department</p>
                   </div>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{setup.assignedDepartment}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.assignedDepartment}</p>
                 </div>
               </div>
             </div>
@@ -518,7 +530,7 @@ export function Dashboard() {
               <div className="space-y-3">
                 <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
                   <p className="text-xs uppercase tracking-[0.16em] text-amber-700">Immediate Supervisor</p>
-                  <p className="mt-2 text-sm font-semibold text-amber-950">{setup.immediateSupervisor}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-amber-950">{setup.immediateSupervisor}</p>
                 </div>
                 <div className="rounded-2xl border border-teal-200 bg-teal-50/70 p-4">
                   <p className="text-xs uppercase tracking-[0.16em] text-teal-700">Work Schedule</p>
@@ -567,7 +579,7 @@ export function Dashboard() {
         <div className="grid h-16 grid-cols-4">
           <button
             onClick={() => setActiveTab('home')}
-            className={`flex flex-col items-center justify-center gap-1 transition-all ${
+            className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
               activeTab === 'home' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -580,7 +592,7 @@ export function Dashboard() {
 
           <button
             onClick={() => setActiveTab('log')}
-            className={`flex flex-col items-center justify-center gap-1 transition-all ${
+            className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
               activeTab === 'log' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -613,7 +625,7 @@ export function Dashboard() {
 
           <button
             onClick={() => setActiveTab('calendar')}
-            className={`flex flex-col items-center justify-center gap-1 transition-all ${
+            className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
               activeTab === 'calendar' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -628,7 +640,7 @@ export function Dashboard() {
 
       <div className="fixed bottom-8 left-1/2 z-30 hidden -translate-x-1/2 md:block">
         <div className="rounded-full border border-white/70 bg-white/85 px-2 py-2 shadow-xl backdrop-blur-xl">
-          <div className="flex gap-1">
+          <div className="flex flex-wrap justify-center gap-1">
             <button
               onClick={() => setActiveTab('home')}
               className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${

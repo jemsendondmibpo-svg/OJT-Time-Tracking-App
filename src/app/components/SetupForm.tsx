@@ -153,15 +153,15 @@ export function SetupForm() {
     workingDays.length > 0;
 
   return (
-    <div className="min-h-screen flex items-start justify-center p-4 pt-8 bg-transparent md:p-8 md:pt-10">
-      <div className="w-full max-w-2xl">
+    <div className="min-h-screen bg-transparent px-4 pb-10 pt-6 sm:px-6 md:px-8 md:pb-12 md:pt-10">
+      <div className="mx-auto w-full max-w-5xl">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="mb-8 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-[1.5rem] mb-4 shadow-lg shadow-teal-700/20 bg-gradient-to-br from-teal-600 to-cyan-600">
             <ClipboardList className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 mb-2">OJT Setup</h1>
-          <p className="text-slate-600">Configure your internship tracking preferences with a guided, cleaner layout.</p>
+          <h1 className="mb-2 text-3xl font-semibold tracking-tight text-slate-900">OJT Setup</h1>
+          <p className="mx-auto max-w-2xl text-sm text-slate-600 sm:text-base">Configure your internship tracking preferences with a guided, cleaner layout.</p>
         </div>
 
         {/* Setup Card */}
@@ -193,7 +193,7 @@ export function SetupForm() {
                 </div>
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-slate-900">Initial Configuration</CardTitle>
                 <CardDescription className="text-slate-600">
@@ -202,7 +202,8 @@ export function SetupForm() {
               </CardHeader>
               <CardContent className="pt-0">
                 <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
                 <Label htmlFor="internName" className="text-sm font-medium text-slate-700">
                   Name of Intern *
                 </Label>
@@ -327,6 +328,7 @@ export function SetupForm() {
                 <p className="text-xs text-slate-500">
                   If you've already completed hours, enter them here
                 </p>
+              </div>
               </div>
 
               <div className="space-y-3">

@@ -73,6 +73,9 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
     }
   };
 
+  const formatEventType = (type: CalendarEvent['type']) =>
+    type.charAt(0).toUpperCase() + type.slice(1);
+
   const renderDays = () => {
     const days = [];
     const dateFormat = 'EEEEEE';
@@ -86,7 +89,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
       );
     }
 
-    return <div className="mb-1 grid grid-cols-7 gap-1 md:mb-2">{days}</div>;
+    return <div className="mb-1 grid min-w-[42rem] grid-cols-7 gap-1 md:mb-2">{days}</div>;
   };
 
   const renderCells = () => {
@@ -105,7 +108,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
         days.push(
           <div
             key={day.toString()}
-            className={`min-h-[70px] cursor-pointer rounded-xl border p-1 transition-all md:min-h-[92px] md:rounded-2xl md:p-2 ${
+            className={`min-h-[78px] cursor-pointer rounded-xl border p-1.5 transition-all md:min-h-[92px] md:rounded-2xl md:p-2 ${
               !isCurrentMonth
                 ? 'border-slate-200 bg-slate-50/80 opacity-50'
                 : 'border-slate-200/90 bg-white/90 hover:border-teal-200 hover:bg-teal-50/40'
@@ -139,7 +142,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
       }
 
       rows.push(
-        <div className="mb-1 grid grid-cols-7 gap-1" key={day.toString()}>
+        <div className="mb-1 grid min-w-[42rem] grid-cols-7 gap-1" key={day.toString()}>
           {days}
         </div>
       );
@@ -161,11 +164,11 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
     <div className="space-y-3 md:space-y-4">
       <Card className="border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
         <CardHeader className="pb-2 md:pb-3">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="bg-gradient-to-r from-teal-700 via-cyan-700 to-sky-700 bg-clip-text text-base font-bold text-transparent md:text-xl">
               {format(currentMonth, 'MMMM yyyy')}
             </CardTitle>
-            <div className="flex items-center gap-1 md:gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button variant="outline" size="sm" onClick={handlePrevMonth} className="h-8 w-8 p-0">
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -187,9 +190,13 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          {renderDays()}
-          {renderCells()}
+        <CardContent className="px-3 pb-4 pt-2 sm:px-6">
+          <div className="-mx-1 overflow-x-auto pb-1">
+            <div className="min-w-[42rem] px-1">
+              {renderDays()}
+              {renderCells()}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -211,7 +218,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
                   <div className="mb-1 flex items-start justify-between gap-2 md:mb-2">
                     <h4 className="flex-1 text-sm font-semibold text-gray-800 md:text-base">{event.title}</h4>
                     <Badge className={`${getEventColor(event.type)} shrink-0 text-[10px] text-white md:text-xs`}>
-                      {event.type}
+                      {formatEventType(event.type)}
                     </Badge>
                   </div>
                   <p className="mb-1 line-clamp-2 text-xs text-gray-600 md:mb-2 md:text-sm">{event.description}</p>

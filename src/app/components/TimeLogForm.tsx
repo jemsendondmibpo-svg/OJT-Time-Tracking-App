@@ -169,7 +169,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
           {editingLog ? 'Update an existing attendance record' : 'Record your daily attendance and hours worked'}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 pb-5 pt-5 sm:px-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="date" className="text-sm font-medium text-slate-700">Date *</Label>
@@ -257,7 +257,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3 rounded-[1.25rem] border border-amber-200 bg-amber-50/80 p-4">
+              <div className="flex items-start space-x-3 rounded-[1.25rem] border border-amber-200 bg-amber-50/80 p-4 sm:items-center">
                 <Checkbox
                   id="holiday"
                   checked={isHoliday}
@@ -278,7 +278,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                 </label>
               </div>
 
-              <div className="flex items-center space-x-3 rounded-[1.25rem] border border-violet-200 bg-violet-50/80 p-4">
+              <div className="flex items-start space-x-3 rounded-[1.25rem] border border-violet-200 bg-violet-50/80 p-4 sm:items-center">
                 <Checkbox
                   id="overtime"
                   checked={isOvertime}
@@ -321,7 +321,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
               )}
 
               {timeIn && timeOut && (
-                <div className="flex items-center justify-between rounded-[1.25rem] bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg shadow-emerald-700/20">
+                <div className="flex flex-col gap-4 rounded-[1.25rem] bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg shadow-emerald-700/20 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.22em] text-white/75">Calculated total</p>
                     <p className="text-sm font-medium text-white">Hours worked for this entry</p>
@@ -341,7 +341,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                       </p>
                     )}
                   </div>
-                  <p className="text-2xl font-semibold text-white">{hoursWorked.toFixed(2)}h</p>
+                  <p className="text-left text-2xl font-semibold text-white sm:text-right">{hoursWorked.toFixed(2)}h</p>
                 </div>
               )}
 

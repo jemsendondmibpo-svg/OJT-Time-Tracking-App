@@ -113,7 +113,7 @@ export function EventDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-[95vw] max-w-md overflow-y-auto rounded-3xl p-4 sm:w-full sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-lg md:text-xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
             {editingEvent ? 'Edit Event' : 'Add New Event'}

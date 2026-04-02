@@ -19,7 +19,7 @@ export function StatsCards({ stats, totalRequired }: StatsCardsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex justify-between text-sm">
+          <div className="flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
             <span className="font-medium text-slate-700">
               {stats.totalHoursCompleted.toFixed(1)} / {totalRequired} hours
             </span>
@@ -47,7 +47,7 @@ export function StatsCards({ stats, totalRequired }: StatsCardsProps) {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border border-emerald-200/80 bg-[linear-gradient(180deg,_rgba(236,253,245,0.95),_rgba(220,252,231,0.88))] shadow-[0_18px_50px_-36px_rgba(5,150,105,0.8)]">
           <CardContent className="pt-4 pb-4">
             <div className="space-y-2">
