@@ -156,9 +156,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                                 {log.isOvertime && (
                                   <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                                     <span className="text-sm font-medium text-slate-600">Overtime</span>
-                                    <span className="text-sm font-semibold text-violet-700">
-                                      {Number(log.overtimeHours ?? 0).toFixed(2)} hrs
-                                    </span>
+                                    <span className="text-sm font-semibold text-violet-700">Yes</span>
                                   </div>
                                 )}
                                 {log.isHoliday && (
@@ -251,7 +249,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                       {log.isOvertime && (
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4 text-violet-600" />
-                          <span>OT: {Number(log.overtimeHours ?? 0).toFixed(2)} hrs</span>
+                          <span>Overtime</span>
                         </div>
                       )}
                       {log.isHoliday && (

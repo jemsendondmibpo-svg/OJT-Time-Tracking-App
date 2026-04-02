@@ -28,7 +28,6 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
   const [lunchStart, setLunchStart] = useState('');
   const [lunchEnd, setLunchEnd] = useState('');
   const [isOvertime, setIsOvertime] = useState(false);
-  const [overtimeHours, setOvertimeHours] = useState('0');
   const [isHoliday, setIsHoliday] = useState(false);
   const [isPresent, setIsPresent] = useState(true);
   const [accomplishment, setAccomplishment] = useState('');
@@ -42,7 +41,6 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
       setLunchStart(editingLog.lunchStart || '');
       setLunchEnd(editingLog.lunchEnd || '');
       setIsOvertime(Boolean(editingLog.isOvertime));
-      setOvertimeHours(String(editingLog.overtimeHours ?? 0));
       setIsHoliday(Boolean(editingLog.isHoliday));
       setIsPresent(editingLog.isPresent);
       setAccomplishment(editingLog.accomplishment || '');
@@ -55,15 +53,13 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
     setLunchStart('');
     setLunchEnd('');
     setIsOvertime(false);
-    setOvertimeHours('0');
     setIsHoliday(false);
     setAccomplishment('');
     setIsPresent(true);
   }, [editingLog, today]);
 
   const baseHoursWorked = calculateHoursWorked(timeIn, timeOut, lunchStart, lunchEnd);
-  const parsedOvertimeHours = isOvertime ? Number(overtimeHours) || 0 : 0;
-  const hoursWorked = (isHoliday ? baseHoursWorked * 2 : baseHoursWorked) + parsedOvertimeHours;
+  const hoursWorked = isHoliday ? baseHoursWorked * 2 : baseHoursWorked;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,11 +89,6 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
       return;
     }
 
-    if (isPresent && isOvertime && parsedOvertimeHours <= 0) {
-      toast.error('Please enter overtime hours greater than 0');
-      return;
-    }
-
     setIsLoading(true);
 
     try {
@@ -110,7 +101,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
         lunch_start: isPresent && lunchStart ? lunchStart : null,
         lunch_end: isPresent && lunchEnd ? lunchEnd : null,
         is_overtime: isPresent ? isOvertime : false,
-        overtime_hours: isPresent && isOvertime ? parsedOvertimeHours : 0,
+        overtime_hours: 0,
         is_holiday: isPresent ? isHoliday : false,
         hours_worked: isPresent ? hoursWorked : 0,
         accomplishment: accomplishment || null,
@@ -145,7 +136,6 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
       setLunchStart('');
       setLunchEnd('');
       setIsOvertime(false);
-      setOvertimeHours('0');
       setIsHoliday(false);
       setAccomplishment('');
       setIsPresent(true);
@@ -293,32 +283,11 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                   <span>
                     Mark as Overtime
                     <span className="mt-1 block text-xs font-normal text-slate-600">
-                      This tags the log as overtime, but the actual hours are still computed from time in and time out.
+                      This tags the log as overtime, but the total hours still come from the actual time range.
                     </span>
                   </span>
                 </label>
               </div>
-
-              {isOvertime && (
-                <div className="rounded-[1.25rem] border border-violet-200 bg-violet-50/60 p-4">
-                  <div className="mb-3">
-                    <p className="text-sm font-medium text-slate-900">Overtime Hours</p>
-                    <p className="text-xs text-slate-500">Add the number of overtime hours rendered beyond the normal schedule.</p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="overtimeHours" className="text-sm font-medium text-slate-700">Overtime Hours</Label>
-                    <Input
-                      id="overtimeHours"
-                      type="number"
-                      min="0"
-                      step="0.25"
-                      value={overtimeHours}
-                      onChange={(e) => setOvertimeHours(e.target.value)}
-                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-violet-600 focus:ring-violet-600"
-                    />
-                  </div>
-                </div>
-              )}
 
               {timeIn && timeOut && (
                 <div className="flex flex-col gap-4 rounded-[1.25rem] bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg shadow-emerald-700/20 sm:flex-row sm:items-center sm:justify-between">
@@ -337,7 +306,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                     )}
                     {isOvertime && (
                       <p className="mt-1 text-xs text-white/85">
-                        Overtime adds {parsedOvertimeHours.toFixed(2)} hour(s) on top of the computed time range.
+                        Overtime is saved as a tag only and is not added to total worked hours.
                       </p>
                     )}
                   </div>
