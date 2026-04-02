@@ -23,11 +23,13 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
   const [date, setDate] = useState(today);
   const [timeIn, setTimeIn] = useState('');
   const [timeOut, setTimeOut] = useState('');
+  const [lunchStart, setLunchStart] = useState('');
+  const [lunchEnd, setLunchEnd] = useState('');
   const [isPresent, setIsPresent] = useState(true);
   const [accomplishment, setAccomplishment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const hoursWorked = calculateHoursWorked(timeIn, timeOut);
+  const hoursWorked = calculateHoursWorked(timeIn, timeOut, lunchStart, lunchEnd);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +46,11 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
 
     if (isPresent && hoursWorked <= 0) {
       toast.error('Time out must be after time in');
+      return;
+    }
+
+    if (isPresent && ((lunchStart && !lunchEnd) || (!lunchStart && lunchEnd))) {
+      toast.error('Please enter both lunch break start and end time');
       return;
     }
 
@@ -78,6 +85,8 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
       setDate(today);
       setTimeIn('');
       setTimeOut('');
+      setLunchStart('');
+      setLunchEnd('');
       setAccomplishment('');
       setIsPresent(true);
       setIsLoading(false);
@@ -157,11 +166,46 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
                 </div>
               </div>
 
+              <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-4">
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-slate-900">Lunch Break</p>
+                  <p className="text-xs text-slate-500">Optional. Enter only if the intern had a lunch break for this schedule.</p>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="lunchStart" className="text-sm font-medium text-slate-700">Lunch Start</Label>
+                    <Input
+                      id="lunchStart"
+                      type="time"
+                      value={lunchStart}
+                      onChange={(e) => setLunchStart(e.target.value)}
+                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="lunchEnd" className="text-sm font-medium text-slate-700">Lunch End</Label>
+                    <Input
+                      id="lunchEnd"
+                      type="time"
+                      value={lunchEnd}
+                      onChange={(e) => setLunchEnd(e.target.value)}
+                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {timeIn && timeOut && (
                 <div className="flex items-center justify-between rounded-[1.25rem] bg-gradient-to-r from-emerald-600 to-teal-600 p-4 shadow-lg shadow-emerald-700/20">
                   <div>
                     <p className="text-xs uppercase tracking-[0.22em] text-white/75">Calculated total</p>
                     <p className="text-sm font-medium text-white">Hours worked for this entry</p>
+                    <p className="mt-1 text-xs text-white/75">
+                      {lunchStart && lunchEnd
+                        ? `Lunch break from ${lunchStart} to ${lunchEnd} is excluded.`
+                        : 'No lunch break deduction is applied unless you enter lunch times.'}
+                    </p>
                   </div>
                   <p className="text-2xl font-semibold text-white">{hoursWorked.toFixed(2)}h</p>
                 </div>
@@ -196,7 +240,7 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
           <div className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/80 p-3">
             <div className="mb-3 flex items-center gap-2 text-sm text-slate-600">
               <CalendarClock className="h-4 w-4 text-teal-600" />
-              Save today&apos;s attendance and refresh your dashboard instantly.
+              Save today&apos;s attendance and optionally deduct the actual lunch break for that schedule.
             </div>
             <Button
               type="submit"

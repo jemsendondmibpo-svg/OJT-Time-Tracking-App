@@ -1,16 +1,41 @@
 import { OJTSetup, DailyLog, CalculatedStats } from './types';
 
-export const calculateHoursWorked = (timeIn: string, timeOut: string): number => {
+export const calculateHoursWorked = (
+  timeIn: string,
+  timeOut: string,
+  lunchStart?: string,
+  lunchEnd?: string
+): number => {
   if (!timeIn || !timeOut) return 0;
-  
+
   const [inHours, inMinutes] = timeIn.split(':').map(Number);
   const [outHours, outMinutes] = timeOut.split(':').map(Number);
-  
+
   const inTotalMinutes = inHours * 60 + inMinutes;
   const outTotalMinutes = outHours * 60 + outMinutes;
-  
+
   const diffMinutes = outTotalMinutes - inTotalMinutes;
-  return Math.max(0, diffMinutes / 60);
+  if (diffMinutes <= 0) return 0;
+
+  if (!lunchStart || !lunchEnd) {
+    return diffMinutes / 60;
+  }
+
+  const [lunchStartHours, lunchStartMins] = lunchStart.split(':').map(Number);
+  const [lunchEndHours, lunchEndMins] = lunchEnd.split(':').map(Number);
+  const lunchStartMinutes = lunchStartHours * 60 + lunchStartMins;
+  const lunchEndMinutes = lunchEndHours * 60 + lunchEndMins;
+
+  if (lunchEndMinutes <= lunchStartMinutes) {
+    return diffMinutes / 60;
+  }
+
+  const lunchOverlapMinutes = Math.max(
+    0,
+    Math.min(outTotalMinutes, lunchEndMinutes) - Math.max(inTotalMinutes, lunchStartMinutes)
+  );
+
+  return Math.max(0, (diffMinutes - lunchOverlapMinutes) / 60);
 };
 
 export const calculateStats = (
