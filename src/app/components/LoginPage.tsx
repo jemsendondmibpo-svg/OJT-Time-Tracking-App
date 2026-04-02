@@ -201,7 +201,7 @@ export function LoginPage() {
               <span className="text-sm font-medium">Track Your Progress</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-              Internship progress, redesigned for focus
+              Internship Progress
             </h2>
             <p className="text-lg text-teal-50/90 mb-8">
               Monitor hours, record accomplishments, and keep your completion timeline visible at a glance.
