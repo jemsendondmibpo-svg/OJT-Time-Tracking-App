@@ -2,6 +2,8 @@
 
 :root {
   --font-size: 16px;
+  --font-body: "Manrope", "Trebuchet MS", "Arial", sans-serif;
+  --font-display: "Sora", "Trebuchet MS", "Arial", sans-serif;
   --background: #f4f7fb;
   --foreground: oklch(0.145 0 0);
   --card: rgba(255, 255, 255, 0.9);
@@ -125,7 +127,8 @@
   }
 
   body {
-    font-family: "Segoe UI", "Trebuchet MS", "Arial", sans-serif;
+    font-family: var(--font-body);
+    letter-spacing: -0.01em;
     background:
       radial-gradient(circle at top left, rgba(20, 184, 166, 0.14), transparent 30%),
       radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 24%),
@@ -148,44 +151,66 @@
   }
 
   h1 {
+    font-family: var(--font-display);
     font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
   }
 
   h2 {
+    font-family: var(--font-display);
     font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
   }
 
   h3 {
+    font-family: var(--font-display);
     font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
   }
 
   h4 {
     font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.35;
   }
 
   label {
     font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.4;
   }
 
   button {
     font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
   }
 
   input {
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
-    line-height: 1.5;
+    letter-spacing: -0.01em;
+    line-height: 1.45;
+  }
+
+  p,
+  span,
+  textarea,
+  select {
+    font-family: var(--font-body);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
   }
 }
