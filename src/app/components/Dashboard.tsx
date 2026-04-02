@@ -446,7 +446,7 @@ export function Dashboard() {
                   {getGreeting()}, {currentUser.fullName.split(' ')[0]} Kupal!!
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-cyan-50/85 md:text-base">
-                  Magtrabaho ka! Wag ka puro tulog panay ka pa nood ng video youtube saka patugtog sa spotify kita ka sa CCTV oy.
+                  Magtrabaho ka! Wag ka puro tulog panay ka pa nood ng video sa youtube at tsaka patugtog sa spotify kita ka sa CCTV uyyyy.
                 </p>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
