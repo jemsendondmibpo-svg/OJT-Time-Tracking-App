@@ -1,4 +1,5 @@
 import {
+  DialogClose,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -27,7 +28,7 @@ import {
 interface TimeLogHistoryProps {
   logs: DailyLog[];
   onDelete: (id: string) => void;
-  onEdit?: (log: DailyLog) => void;
+  onEdit: (log: DailyLog) => void;
 }
 
 export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) {
@@ -45,7 +46,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
     });
   };
 
-  const formatTime = (time: string) => {
+  const formatTime = (time?: string) => {
     if (!time) return '--:--';
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours);
@@ -62,7 +63,7 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
           Time Log History
         </CardTitle>
         <CardDescription className="text-sm text-slate-600">
-          View and manage your daily time entries
+          View, edit, and manage your daily time entries
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -134,6 +135,14 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                                   <span className="text-sm font-medium text-slate-600">Time Out</span>
                                   <span className="text-sm font-semibold text-slate-900">{formatTime(log.timeOut)}</span>
                                 </div>
+                                {log.lunchStart && log.lunchEnd && (
+                                  <div className="mb-3 flex items-center justify-between">
+                                    <span className="text-sm font-medium text-slate-600">Lunch Break</span>
+                                    <span className="text-sm font-semibold text-slate-900">
+                                      {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}
+                                    </span>
+                                  </div>
+                                )}
                                 <div className="flex items-center justify-between">
                                   <span className="text-sm font-medium text-slate-600">Hours Worked</span>
                                   <span className="text-sm font-bold text-emerald-700">{log.hoursWorked.toFixed(2)} hrs</span>
@@ -157,21 +166,22 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                           )}
                         </div>
                         <DialogFooter>
-                          <Button variant="outline">Close</Button>
+                          <DialogClose asChild>
+                            <Button variant="outline">Close</Button>
+                          </DialogClose>
                         </DialogFooter>
                       </DialogContent>
                     </Dialog>
 
-                    {onEdit && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 flex-shrink-0 hover:bg-blue-50"
-                        onClick={() => onEdit(log)}
-                      >
-                        <Pencil className="h-4 w-4 text-blue-600" />
-                      </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 flex-shrink-0 hover:bg-blue-50"
+                      onClick={() => onEdit(log)}
+                      title="Edit time log"
+                    >
+                      <Pencil className="h-4 w-4 text-blue-600" />
+                    </Button>
 
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -208,6 +218,12 @@ export function TimeLogHistory({ logs, onDelete, onEdit }: TimeLogHistoryProps) 
                         <Clock className="h-4 w-4 text-blue-600" />
                         <span>Out: {formatTime(log.timeOut)}</span>
                       </div>
+                      {log.lunchStart && log.lunchEnd && (
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-4 w-4 text-amber-600" />
+                          <span>Lunch: {formatTime(log.lunchStart)} - {formatTime(log.lunchEnd)}</span>
+                        </div>
+                      )}
                       <div className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-700">
                         {log.hoursWorked.toFixed(2)} hrs
                       </div>

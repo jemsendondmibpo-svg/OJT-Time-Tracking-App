@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -13,10 +13,12 @@ import { Clock, Save, CalendarClock, NotebookPen } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TimeLogFormProps {
+  editingLog?: DailyLog | null;
+  onCancelEdit?: () => void;
   onSave: (log: DailyLog) => void;
 }
 
-export function TimeLogForm({ onSave }: TimeLogFormProps) {
+export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormProps) {
   const today = new Date().toISOString().split('T')[0];
   const currentUser = getCurrentUser();
 
@@ -28,6 +30,27 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
   const [isPresent, setIsPresent] = useState(true);
   const [accomplishment, setAccomplishment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (editingLog) {
+      setDate(editingLog.date);
+      setTimeIn(editingLog.timeIn || '');
+      setTimeOut(editingLog.timeOut || '');
+      setLunchStart(editingLog.lunchStart || '');
+      setLunchEnd(editingLog.lunchEnd || '');
+      setIsPresent(editingLog.isPresent);
+      setAccomplishment(editingLog.accomplishment || '');
+      return;
+    }
+
+    setDate(today);
+    setTimeIn('');
+    setTimeOut('');
+    setLunchStart('');
+    setLunchEnd('');
+    setAccomplishment('');
+    setIsPresent(true);
+  }, [editingLog, today]);
 
   const hoursWorked = calculateHoursWorked(timeIn, timeOut, lunchStart, lunchEnd);
 
@@ -54,23 +77,38 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
       return;
     }
 
+    if (isPresent && lunchStart && lunchEnd && lunchEnd <= lunchStart) {
+      toast.error('Lunch break end time must be after lunch break start time');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { error } = await supabase
-        .from('time_logs')
-        .insert({
-          user_id: currentUser?.id,
-          date,
-          is_present: isPresent,
-          time_in: isPresent ? timeIn : null,
-          time_out: isPresent ? timeOut : null,
-          hours_worked: isPresent ? hoursWorked : 0,
-          accomplishment: accomplishment || null,
-        });
+      const payload = {
+        user_id: currentUser?.id,
+        date,
+        is_present: isPresent,
+        time_in: isPresent ? timeIn : null,
+        time_out: isPresent ? timeOut : null,
+        lunch_start: isPresent && lunchStart ? lunchStart : null,
+        lunch_end: isPresent && lunchEnd ? lunchEnd : null,
+        hours_worked: isPresent ? hoursWorked : 0,
+        accomplishment: accomplishment || null,
+      };
+
+      const query = editingLog
+        ? supabase
+            .from('time_logs')
+            .update(payload)
+            .eq('id', editingLog.id)
+            .eq('user_id', currentUser?.id)
+        : supabase.from('time_logs').insert(payload);
+
+      const { error } = await query;
 
       if (error) {
-        if (error.code === '23505') {
+        if (!editingLog && error.code === '23505') {
           toast.error('A log for this date already exists');
         } else {
           toast.error(error.message || 'Failed to save log');
@@ -79,7 +117,7 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
         return;
       }
 
-      toast.success('Time log saved successfully!');
+      toast.success(editingLog ? 'Time log updated successfully!' : 'Time log saved successfully!');
       onSave({} as DailyLog);
 
       setDate(today);
@@ -90,6 +128,7 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
       setAccomplishment('');
       setIsPresent(true);
       setIsLoading(false);
+      onCancelEdit?.();
     } catch (error) {
       console.error('Save log error:', error);
       toast.error('An unexpected error occurred');
@@ -102,10 +141,10 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
       <CardHeader className="border-b border-slate-200/70 bg-[linear-gradient(135deg,_rgba(15,118,110,0.08),_rgba(14,165,233,0.08))] pb-4">
         <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
           <Clock className="w-5 h-5 text-teal-600" />
-          Log Daily Time
+          {editingLog ? 'Edit Time Log' : 'Log Daily Time'}
         </CardTitle>
         <CardDescription className="text-sm text-slate-600">
-          Record your daily attendance and hours worked
+          {editingLog ? 'Update an existing attendance record' : 'Record your daily attendance and hours worked'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -248,8 +287,18 @@ export function TimeLogForm({ onSave }: TimeLogFormProps) {
               className="w-full h-12 rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-700/20 hover:from-teal-700 hover:to-cyan-700"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isLoading ? 'Saving...' : 'Save Time Log'}
+              {isLoading ? 'Saving...' : editingLog ? 'Update Time Log' : 'Save Time Log'}
             </Button>
+            {editingLog && onCancelEdit && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancelEdit}
+                className="mt-3 w-full h-12 rounded-2xl"
+              >
+                Cancel Edit
+              </Button>
+            )}
           </div>
         </form>
       </CardContent>

@@ -16,9 +16,12 @@ export interface DailyLog {
   date: string;
   timeIn: string;
   timeOut: string;
+  lunchStart?: string;
+  lunchEnd?: string;
   isPresent: boolean;
   accomplishment: string;
   hoursWorked: number;
+  photoUrl?: string;
 }
 
 export interface CalculatedStats {

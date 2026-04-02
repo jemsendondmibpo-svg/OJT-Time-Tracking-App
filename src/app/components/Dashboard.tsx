@@ -55,6 +55,7 @@ export function Dashboard() {
   const [logs, setLogs] = useState<DailyLog[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [activeTab, setActiveTab] = useState<TabValue>('home');
+  const [editingLog, setEditingLog] = useState<DailyLog | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -124,6 +125,8 @@ export function Dashboard() {
           isPresent: log.is_present,
           timeIn: log.time_in,
           timeOut: log.time_out,
+          lunchStart: log.lunch_start,
+          lunchEnd: log.lunch_end,
           hoursWorked: log.hours_worked,
           accomplishment: log.accomplishment,
           photoUrl: log.photo_url,
@@ -156,7 +159,17 @@ export function Dashboard() {
   };
 
   const handleSaveLog = async (_log: DailyLog) => {
+    setEditingLog(null);
     await loadData();
+  };
+
+  const handleEditLog = (log: DailyLog) => {
+    setEditingLog(log);
+    setActiveTab('log');
+  };
+
+  const handleCancelEditLog = () => {
+    setEditingLog(null);
   };
 
   const handleDeleteLog = async (id: string) => {
@@ -522,8 +535,20 @@ export function Dashboard() {
         )}
 
         <div className="pb-safe">
-          {activeTab === 'log' && <TimeLogForm onSave={handleSaveLog} />}
-          {activeTab === 'history' && <TimeLogHistory logs={logs} onDelete={handleDeleteLog} />}
+          {activeTab === 'log' && (
+            <TimeLogForm
+              editingLog={editingLog}
+              onCancelEdit={handleCancelEditLog}
+              onSave={handleSaveLog}
+            />
+          )}
+          {activeTab === 'history' && (
+            <TimeLogHistory
+              logs={logs}
+              onDelete={handleDeleteLog}
+              onEdit={handleEditLog}
+            />
+          )}
           {activeTab === 'calendar' && (
             <Calendar
               events={events}

@@ -271,7 +271,7 @@ app.post('/make-server-c77f18a2/logs', async (c) => {
       return c.json({ error: authError || 'Unauthorized' }, 401);
     }
 
-    const { date, isPresent, timeIn, timeOut, hoursWorked, accomplishment, photoUrl } = await c.req.json();
+    const { date, isPresent, timeIn, timeOut, lunchStart, lunchEnd, hoursWorked, accomplishment, photoUrl } = await c.req.json();
 
     if (!date) {
       return c.json({ error: 'Date is required' }, 400);
@@ -288,6 +288,8 @@ app.post('/make-server-c77f18a2/logs', async (c) => {
         is_present: isPresent,
         time_in: timeIn,
         time_out: timeOut,
+        lunch_start: lunchStart,
+        lunch_end: lunchEnd,
         hours_worked: hoursWorked || 0,
         accomplishment,
         photo_url: photoUrl,
@@ -333,6 +335,54 @@ app.delete('/make-server-c77f18a2/logs/:id', async (c) => {
     return c.json({ message: 'Log deleted successfully' });
   } catch (error) {
     console.error('Delete log error:', error);
+    return c.json({ error: 'Internal server error' }, 500);
+  }
+});
+
+// Update time log
+app.put('/make-server-c77f18a2/logs/:id', async (c) => {
+  try {
+    const { user, error: authError } = await getAuthenticatedUser(c.req.raw);
+    if (authError || !user) {
+      return c.json({ error: authError || 'Unauthorized' }, 401);
+    }
+
+    const logId = c.req.param('id');
+    const { date, isPresent, timeIn, timeOut, lunchStart, lunchEnd, hoursWorked, accomplishment, photoUrl } = await c.req.json();
+
+    if (!date) {
+      return c.json({ error: 'Date is required' }, 400);
+    }
+
+    const accessToken = c.req.header('Authorization')?.split(' ')[1];
+    const supabase = getSupabaseClient(accessToken);
+
+    const { data, error } = await supabase
+      .from('time_logs')
+      .update({
+        date,
+        is_present: isPresent,
+        time_in: timeIn,
+        time_out: timeOut,
+        lunch_start: lunchStart,
+        lunch_end: lunchEnd,
+        hours_worked: hoursWorked || 0,
+        accomplishment,
+        photo_url: photoUrl,
+      })
+      .eq('id', logId)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Update log error:', error);
+      return c.json({ error: 'Failed to update log' }, 500);
+    }
+
+    return c.json({ log: data });
+  } catch (error) {
+    console.error('Update log error:', error);
     return c.json({ error: 'Internal server error' }, 500);
   }
 });
