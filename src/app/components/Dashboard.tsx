@@ -46,10 +46,31 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from './ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Checkbox } from './ui/checkbox';
 import { toast } from 'sonner';
 
 type TabValue = 'home' | 'log' | 'history' | 'calendar';
+
+const DAYS_OF_WEEK = [
+  { value: 1, label: 'Monday' },
+  { value: 2, label: 'Tuesday' },
+  { value: 3, label: 'Wednesday' },
+  { value: 4, label: 'Thursday' },
+  { value: 5, label: 'Friday' },
+  { value: 6, label: 'Saturday' },
+  { value: 0, label: 'Sunday' },
+];
 
 const getEventErrorMessage = (error: any, fallback: string) => {
   const message = error?.message || fallback;
@@ -79,7 +100,10 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [showEditProfileDialog, setShowEditProfileDialog] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [profileForm, setProfileForm] = useState<OJTSetup | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -348,6 +372,81 @@ export function Dashboard() {
     navigate('/login');
   };
 
+  const handleOpenEditProfile = () => {
+    if (!setup) return;
+    setProfileForm({
+      ...setup,
+      workingDays: [...setup.workingDays],
+    });
+    setShowEditProfileDialog(true);
+  };
+
+  const handleWorkingDayToggle = (day: number) => {
+    setProfileForm((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        workingDays: prev.workingDays.includes(day)
+          ? prev.workingDays.filter((value) => value !== day)
+          : [...prev.workingDays, day].sort((a, b) => a - b),
+      };
+    });
+  };
+
+  const handleSaveProfile = async () => {
+    if (!profileForm || !currentUser) return;
+
+    if (
+      !profileForm.internName.trim() ||
+      !profileForm.course.trim() ||
+      !profileForm.schoolName.trim() ||
+      !profileForm.companyName.trim() ||
+      !profileForm.assignedDepartment.trim() ||
+      !profileForm.immediateSupervisor.trim() ||
+      profileForm.totalRequiredHours <= 0 ||
+      profileForm.workingDays.length === 0
+    ) {
+      toast.error('Please complete all required profile fields');
+      return;
+    }
+
+    try {
+      setIsSavingProfile(true);
+
+      const { error } = await supabase
+        .from('ojt_setup')
+        .update({
+          intern_name: profileForm.internName.trim(),
+          course: profileForm.course.trim(),
+          school_name: profileForm.schoolName.trim(),
+          company_name: profileForm.companyName.trim(),
+          assigned_department: profileForm.assignedDepartment.trim(),
+          immediate_supervisor: profileForm.immediateSupervisor.trim(),
+          total_required_hours: profileForm.totalRequiredHours,
+          previous_hours: profileForm.previousHours,
+          working_days: profileForm.workingDays,
+        })
+        .eq('user_id', currentUser.id);
+
+      if (error) {
+        console.error('Update profile error:', error);
+        toast.error('Failed to update intern profile');
+        setIsSavingProfile(false);
+        return;
+      }
+
+      setSetup(profileForm);
+      setShowEditProfileDialog(false);
+      toast.success('Intern profile updated');
+    } catch (error) {
+      console.error('Update profile error:', error);
+      toast.error('Failed to update intern profile');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
   if (isLoading || !setup || !currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-transparent">
@@ -468,10 +567,10 @@ export function Dashboard() {
                   Progress command center
                 </div>
                 <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
-                  {getGreeting()}, {currentUser.fullName.split(' ')[0]} Kupal!!
+                  {getGreeting()}, {setup.internName.split(' ')[0]}!
                 </h2>
                 <p className="mt-2 max-w-2xl text-sm text-cyan-50/85 md:text-base">
-                  Magtrabaho ka! Wag ka puro tulog panay ka pa nood ng video sa youtube at tsaka patugtog sa spotify kita ka sa CCTV uyyyy.
+                  Stay on top of your internship progress, manage your daily logs, and keep your important milestones in one place.
                 </p>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -524,9 +623,20 @@ export function Dashboard() {
         {activeTab === 'home' && (
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70 dark:shadow-[0_20px_70px_-35px_rgba(2,6,23,0.9)]">
-              <div className="mb-4 flex items-center gap-2">
-                <UserRound className="h-5 w-5 text-teal-600" />
-                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Intern Profile</h3>
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <UserRound className="h-5 w-5 text-teal-600" />
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Intern Profile</h3>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleOpenEditProfile}
+                  className="rounded-full"
+                >
+                  Edit Profile
+                </Button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
@@ -609,6 +719,7 @@ export function Dashboard() {
           {activeTab === 'calendar' && (
             <Calendar
               events={events}
+              logs={logs}
               onAddEvent={handleAddEvent}
               onUpdateEvent={handleUpdateEvent}
               onDeleteEvent={handleDeleteEvent}
@@ -781,6 +892,143 @@ export function Dashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={showEditProfileDialog} onOpenChange={setShowEditProfileDialog}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Edit Intern Profile</DialogTitle>
+            <DialogDescription>
+              Update your internship details without resetting your setup.
+            </DialogDescription>
+          </DialogHeader>
+
+          {profileForm && (
+            <div className="grid gap-5 py-2 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="editInternName">Name of Intern</Label>
+                <Input
+                  id="editInternName"
+                  value={profileForm.internName}
+                  onChange={(e) => setProfileForm({ ...profileForm, internName: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editCourse">Course</Label>
+                <Input
+                  id="editCourse"
+                  value={profileForm.course}
+                  onChange={(e) => setProfileForm({ ...profileForm, course: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editSchoolName">School Name</Label>
+                <Input
+                  id="editSchoolName"
+                  value={profileForm.schoolName}
+                  onChange={(e) => setProfileForm({ ...profileForm, schoolName: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editCompanyName">Company Name</Label>
+                <Input
+                  id="editCompanyName"
+                  value={profileForm.companyName}
+                  onChange={(e) => setProfileForm({ ...profileForm, companyName: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editDepartment">Assigned Department</Label>
+                <Input
+                  id="editDepartment"
+                  value={profileForm.assignedDepartment}
+                  onChange={(e) => setProfileForm({ ...profileForm, assignedDepartment: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editSupervisor">Immediate Supervisor</Label>
+                <Input
+                  id="editSupervisor"
+                  value={profileForm.immediateSupervisor}
+                  onChange={(e) => setProfileForm({ ...profileForm, immediateSupervisor: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editTotalHours">Total Required Hours</Label>
+                <Input
+                  id="editTotalHours"
+                  type="number"
+                  min="1"
+                  value={profileForm.totalRequiredHours}
+                  onChange={(e) =>
+                    setProfileForm({
+                      ...profileForm,
+                      totalRequiredHours: Number(e.target.value) || 0,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editPreviousHours">Previously Completed Hours</Label>
+                <Input
+                  id="editPreviousHours"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={profileForm.previousHours}
+                  onChange={(e) =>
+                    setProfileForm({
+                      ...profileForm,
+                      previousHours: Number(e.target.value) || 0,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="space-y-3 md:col-span-2">
+                <Label>Working Days</Label>
+                <div className="grid gap-2 rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75 sm:grid-cols-2 md:grid-cols-3">
+                  {DAYS_OF_WEEK.map((day) => (
+                    <label
+                      key={day.value}
+                      htmlFor={`edit-day-${day.value}`}
+                      className="flex cursor-pointer items-center gap-3 rounded-xl border border-transparent bg-white/80 px-3 py-3 shadow-sm dark:bg-slate-900/70"
+                    >
+                      <Checkbox
+                        id={`edit-day-${day.value}`}
+                        checked={profileForm.workingDays.includes(day.value)}
+                        onCheckedChange={() => handleWorkingDayToggle(day.value)}
+                      />
+                      <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {day.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowEditProfileDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleSaveProfile} disabled={isSavingProfile}>
+              {isSavingProfile ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

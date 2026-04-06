@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { CalendarEvent } from '../types';
+import { CalendarEvent, DailyLog } from '../types';
 import {
   startOfMonth,
   endOfMonth,
@@ -21,12 +21,13 @@ import { Badge } from './ui/badge';
 
 interface CalendarProps {
   events: CalendarEvent[];
+  logs: DailyLog[];
   onAddEvent: (event: CalendarEvent) => void;
   onUpdateEvent: (event: CalendarEvent) => void;
   onDeleteEvent: (id: string) => void;
 }
 
-export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: CalendarProps) {
+export function Calendar({ events, logs, onAddEvent, onUpdateEvent, onDeleteEvent }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -56,6 +57,13 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
   const getEventsForDate = (date: Date): CalendarEvent[] => {
     const dateStr = format(date, 'yyyy-MM-dd');
     return events.filter((event) => event.date === dateStr);
+  };
+
+  const getHoursForDate = (date: Date) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return logs
+      .filter((log) => log.date === dateStr && log.isPresent)
+      .reduce((total, log) => total + log.hoursWorked, 0);
   };
 
   const getEventColor = (type: CalendarEvent['type']) => {
@@ -102,6 +110,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
         const formattedDate = format(day, 'd');
         const cloneDay = day;
         const dayEvents = getEventsForDate(day);
+        const hoursWorked = getHoursForDate(day);
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isToday = isSameDay(day, new Date());
 
@@ -119,6 +128,11 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
               {formattedDate}
             </div>
             <div className="space-y-1">
+              {hoursWorked > 0 && (
+                <div className="rounded-md bg-emerald-100 px-1 py-0.5 text-center text-[8px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 md:rounded-lg md:px-2 md:py-1 md:text-[11px]">
+                  {hoursWorked.toFixed(hoursWorked % 1 === 0 ? 0 : 1)}h worked
+                </div>
+              )}
               {dayEvents.slice(0, 2).map((event) => (
                 <div
                   key={event.id}
