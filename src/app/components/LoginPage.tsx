@@ -7,6 +7,7 @@ import { setCurrentUser } from '../auth-utils';
 import { supabase } from '../supabase-client';
 import { GraduationCap, Mail, Lock, LogIn, Eye, EyeOff, Sparkles, TrendingUp, Clock, ShieldCheck } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { useForcedTheme } from '../use-forced-theme';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useForcedTheme('light');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

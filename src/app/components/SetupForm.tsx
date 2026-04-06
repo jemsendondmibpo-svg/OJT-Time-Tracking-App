@@ -10,6 +10,7 @@ import { getCurrentUser } from '../auth-utils';
 import { supabase } from '../supabase-client';
 import { ClipboardList, ArrowRight, CalendarDays, TimerReset } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { useForcedTheme } from '../use-forced-theme';
 
 const DAYS_OF_WEEK = [
   { value: 1, label: 'Monday' },
@@ -37,6 +38,8 @@ export function SetupForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingSetup, setIsCheckingSetup] = useState(true);
   const hasCheckedSetup = useRef(false);
+
+  useForcedTheme('light');
 
   // Check if setup already exists - run once
   useEffect(() => {

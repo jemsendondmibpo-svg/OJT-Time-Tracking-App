@@ -6,6 +6,7 @@ import { Label } from './ui/label';
 import { supabase } from '../supabase-client';
 import { GraduationCap, Mail, Lock, User, UserPlus, Eye, EyeOff, Sparkles, Shield, CheckCircle2, Layers3 } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { useForcedTheme } from '../use-forced-theme';
 
 export function SignupPage() {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useForcedTheme('light');
 
   // Password strength calculation
   const getPasswordStrength = (pwd: string) => {
