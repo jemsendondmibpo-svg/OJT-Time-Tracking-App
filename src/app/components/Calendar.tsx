@@ -83,7 +83,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
 
     for (let i = 0; i < 7; i++) {
       days.push(
-        <div key={i} className="py-1 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500 md:py-2 md:text-xs">
+        <div key={i} className="py-1 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 md:py-2 md:text-xs">
           {format(addDays(weekdayStart, i), dateFormat)}
         </div>
       );
@@ -110,12 +110,12 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
             key={day.toString()}
             className={`min-h-[78px] cursor-pointer rounded-xl border p-1.5 transition-all md:min-h-[92px] md:rounded-2xl md:p-2 ${
               !isCurrentMonth
-                ? 'border-slate-200 bg-slate-50/80 opacity-50'
-                : 'border-slate-200/90 bg-white/90 hover:border-teal-200 hover:bg-teal-50/40'
-            } ${isToday ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-white' : ''}`}
+                ? 'border-slate-200 bg-slate-50/80 opacity-50 dark:border-slate-800 dark:bg-slate-900/70'
+                : 'border-slate-200/90 bg-white/90 hover:border-teal-200 hover:bg-teal-50/40 dark:border-slate-700 dark:bg-slate-900/75 dark:hover:border-teal-400/30 dark:hover:bg-teal-500/10'
+            } ${isToday ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-900' : ''}`}
             onClick={() => handleDateClick(cloneDay)}
           >
-            <div className={`mb-1 text-center text-[10px] font-medium md:text-left md:text-sm ${isToday ? 'font-bold text-teal-700' : 'text-slate-700'}`}>
+            <div className={`mb-1 text-center text-[10px] font-medium md:text-left md:text-sm ${isToday ? 'font-bold text-teal-700 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
               {formattedDate}
             </div>
             <div className="space-y-1">
@@ -131,7 +131,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
                 </div>
               ))}
               {dayEvents.length > 2 && (
-                <div className="text-center text-[8px] font-medium text-slate-500 md:text-xs">
+                <div className="text-center text-[8px] font-medium text-slate-500 dark:text-slate-400 md:text-xs">
                   +{dayEvents.length - 2}
                 </div>
               )}
@@ -162,7 +162,7 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
 
   return (
     <div className="space-y-3 md:space-y-4">
-      <Card className="border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+      <Card className="border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70 dark:shadow-[0_20px_70px_-35px_rgba(2,6,23,0.9)]">
         <CardHeader className="pb-2 md:pb-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="bg-gradient-to-r from-teal-700 via-cyan-700 to-sky-700 bg-clip-text text-base font-bold text-transparent md:text-xl">
@@ -201,9 +201,9 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
       </Card>
 
       {upcomingEvents.length > 0 && (
-        <Card className="border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+        <Card className="border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70 dark:shadow-[0_20px_70px_-35px_rgba(2,6,23,0.9)]">
           <CardHeader className="pb-2 md:pb-3">
-            <CardTitle className="text-base font-bold text-gray-800 md:text-lg">
+            <CardTitle className="text-base font-bold text-gray-800 dark:text-slate-100 md:text-lg">
               Upcoming Events
             </CardTitle>
           </CardHeader>
@@ -213,16 +213,16 @@ export function Calendar({ events, onAddEvent, onUpdateEvent, onDeleteEvent }: C
                 <div
                   key={event.id}
                   onClick={(e) => handleEventClick(event, e)}
-                  className="cursor-pointer rounded-2xl border border-slate-200 bg-[linear-gradient(180deg,_rgba(240,253,250,0.96),_rgba(239,246,255,0.92))] p-3 transition-all hover:border-teal-200 hover:shadow-md md:p-4"
+                  className="cursor-pointer rounded-2xl border border-slate-200 bg-[linear-gradient(180deg,_rgba(240,253,250,0.96),_rgba(239,246,255,0.92))] p-3 transition-all hover:border-teal-200 hover:shadow-md md:p-4 dark:border-slate-700 dark:bg-[linear-gradient(180deg,_rgba(15,23,42,0.94),_rgba(17,24,39,0.88))] dark:hover:border-teal-400/30"
                 >
                   <div className="mb-1 flex items-start justify-between gap-2 md:mb-2">
-                    <h4 className="flex-1 text-sm font-semibold text-gray-800 md:text-base">{event.title}</h4>
+                    <h4 className="flex-1 text-sm font-semibold text-gray-800 dark:text-slate-100 md:text-base">{event.title}</h4>
                     <Badge className={`${getEventColor(event.type)} shrink-0 text-[10px] text-white md:text-xs`}>
                       {formatEventType(event.type)}
                     </Badge>
                   </div>
-                  <p className="mb-1 line-clamp-2 text-xs text-gray-600 md:mb-2 md:text-sm">{event.description}</p>
-                  <div className="flex flex-wrap items-center gap-2 text-[10px] text-gray-500 md:gap-3 md:text-xs">
+                  <p className="mb-1 line-clamp-2 text-xs text-gray-600 dark:text-slate-300 md:mb-2 md:text-sm">{event.description}</p>
+                  <div className="flex flex-wrap items-center gap-2 text-[10px] text-gray-500 dark:text-slate-400 md:gap-3 md:text-xs">
                     <span>{format(parseISO(event.date), 'MMM dd, yyyy')}</span>
                     <span>{event.startTime} - {event.endTime}</span>
                   </div>

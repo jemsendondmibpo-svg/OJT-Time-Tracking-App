@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useTheme } from 'next-themes';
 import { StatsCards } from './StatsCards';
 import { TimeLogForm } from './TimeLogForm';
 import { TimeLogHistory } from './TimeLogHistory';
@@ -23,6 +24,8 @@ import {
   GraduationCap,
   Building2,
   BriefcaseBusiness,
+  MoonStar,
+  SunMedium,
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import {
@@ -65,6 +68,7 @@ const getEventErrorMessage = (error: any, fallback: string) => {
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const { resolvedTheme, setTheme } = useTheme();
   const [currentUser] = useState(() => getCurrentUser());
   const [setup, setSetup] = useState<OJTSetup | null>(null);
   const [logs, setLogs] = useState<DailyLog[]>([]);
@@ -75,6 +79,11 @@ export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -344,7 +353,7 @@ export function Dashboard() {
       <div className="min-h-screen flex items-center justify-center bg-transparent">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-teal-600 border-t-transparent"></div>
-          <p className="text-slate-600">Loading your dashboard...</p>
+          <p className="text-slate-600 dark:text-slate-400">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -382,9 +391,11 @@ export function Dashboard() {
       second: '2-digit',
     });
 
+  const isDarkMode = mounted && resolvedTheme === 'dark';
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-transparent pb-20 md:pb-6">
-      <div className="sticky top-0 z-20 border-b border-white/70 bg-white/75 shadow-sm backdrop-blur-xl">
+      <div className="sticky top-0 z-20 border-b border-white/70 bg-white/75 shadow-sm backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-950/70">
         <div className="px-4 py-4 md:px-6 md:py-5">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -392,43 +403,57 @@ export function Dashboard() {
                 <ClipboardList className="h-5 w-5 text-white md:h-6 md:w-6" />
               </div>
               <div className="min-w-0">
-                <h1 className="truncate text-lg font-semibold text-slate-900 md:text-2xl">
+                <h1 className="truncate text-lg font-semibold text-slate-900 dark:text-slate-100 md:text-2xl">
                   OJT Time Tracker
                 </h1>
-                <p className="hidden text-xs text-slate-600 sm:block md:text-sm">
+                <p className="hidden text-xs text-slate-600 dark:text-slate-400 sm:block md:text-sm">
                   Track your internship progress
                 </p>
               </div>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full md:h-10 md:w-10">
-                  <Avatar className="h-9 w-9 border-2 border-teal-200 md:h-10 md:w-10">
-                    <AvatarFallback className="bg-teal-600 text-sm font-medium text-white">
-                      {getInitials(currentUser.fullName)}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{currentUser.fullName}</p>
-                    <p className="text-xs text-slate-500">{currentUser.email}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setShowResetDialog(true)}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Reset Setup
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
+                className="rounded-full border-white/70 bg-white/75 px-3 text-slate-700 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-100"
+                aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {isDarkMode ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
+                <span className="hidden sm:inline">{isDarkMode ? 'Light mode' : 'Dark mode'}</span>
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full md:h-10 md:w-10">
+                    <Avatar className="h-9 w-9 border-2 border-teal-200 dark:border-teal-500/50 md:h-10 md:w-10">
+                      <AvatarFallback className="bg-teal-600 text-sm font-medium text-white">
+                        {getInitials(currentUser.fullName)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium">{currentUser.fullName}</p>
+                      <p className="text-xs text-slate-500">{currentUser.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowResetDialog(true)}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    Reset Setup
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowLogoutDialog(true)} className="text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </div>
@@ -498,66 +523,66 @@ export function Dashboard() {
 
         {activeTab === 'home' && (
           <div className="grid gap-4 lg:grid-cols-2">
-            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70 dark:shadow-[0_20px_70px_-35px_rgba(2,6,23,0.9)]">
               <div className="mb-4 flex items-center gap-2">
                 <UserRound className="h-5 w-5 text-teal-600" />
-                <h3 className="text-base font-semibold text-slate-900">Intern Profile</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Intern Profile</h3>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Name of Intern</p>
-                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.internName}</p>
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
+                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Name of Intern</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900 dark:text-slate-100">{setup.internName}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                  <div className="flex items-center gap-2 text-slate-500">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <GraduationCap className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">Course</p>
                   </div>
-                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.course}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900 dark:text-slate-100">{setup.course}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                  <div className="flex items-center gap-2 text-slate-500">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <Building2 className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">School Name</p>
                   </div>
-                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.schoolName}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900 dark:text-slate-100">{setup.schoolName}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                  <div className="flex items-center gap-2 text-slate-500">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <Building2 className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">Company Name</p>
                   </div>
-                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.companyName}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900 dark:text-slate-100">{setup.companyName}</p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                  <div className="flex items-center gap-2 text-slate-500">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
+                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                     <BriefcaseBusiness className="h-4 w-4" />
                     <p className="text-xs uppercase tracking-[0.16em]">Assigned Department</p>
                   </div>
-                  <p className="mt-2 break-words text-sm font-semibold text-slate-900">{setup.assignedDepartment}</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-slate-900 dark:text-slate-100">{setup.assignedDepartment}</p>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
+            <div className="rounded-[1.75rem] border border-white/70 bg-white/85 p-5 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70 dark:shadow-[0_20px_70px_-35px_rgba(2,6,23,0.9)]">
               <div className="mb-4 flex items-center gap-2">
                 <Settings className="h-5 w-5 text-amber-600" />
-                <h3 className="text-base font-semibold text-slate-900">Placement Details</h3>
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">Placement Details</h3>
               </div>
               <div className="space-y-3">
-                <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
-                  <p className="text-xs uppercase tracking-[0.16em] text-amber-700">Immediate Supervisor</p>
-                  <p className="mt-2 break-words text-sm font-semibold text-amber-950">{setup.immediateSupervisor}</p>
+                <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 dark:border-amber-400/20 dark:bg-amber-500/10">
+                  <p className="text-xs uppercase tracking-[0.16em] text-amber-700 dark:text-amber-300">Immediate Supervisor</p>
+                  <p className="mt-2 break-words text-sm font-semibold text-amber-950 dark:text-amber-100">{setup.immediateSupervisor}</p>
                 </div>
-                <div className="rounded-2xl border border-teal-200 bg-teal-50/70 p-4">
-                  <p className="text-xs uppercase tracking-[0.16em] text-teal-700">Work Schedule</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">
+                <div className="rounded-2xl border border-teal-200 bg-teal-50/70 p-4 dark:border-teal-400/20 dark:bg-teal-500/10">
+                  <p className="text-xs uppercase tracking-[0.16em] text-teal-700 dark:text-teal-300">Work Schedule</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {setup.workingDays.length} working day{setup.workingDays.length === 1 ? '' : 's'} selected
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
-                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Starting Baseline</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
+                  <p className="text-xs uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Starting Baseline</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
                     {setup.previousHours.toFixed(1)} previous hour{setup.previousHours === 1 ? '' : 's'}
                   </p>
                 </div>
@@ -592,12 +617,14 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/70 bg-white/85 shadow-lg backdrop-blur-xl md:hidden">
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/70 bg-white/85 shadow-lg backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-950/85 md:hidden">
         <div className="grid h-16 grid-cols-4">
           <button
             onClick={() => setActiveTab('home')}
             className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'home' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'home'
+                ? 'bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             <Home className="h-6 w-6" />
@@ -610,7 +637,9 @@ export function Dashboard() {
           <button
             onClick={() => setActiveTab('log')}
             className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'log' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'log'
+                ? 'bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             <Clock className="h-6 w-6" />
@@ -623,7 +652,9 @@ export function Dashboard() {
           <button
             onClick={() => setActiveTab('history')}
             className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'history' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'history'
+                ? 'bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             <div className="relative">
@@ -643,7 +674,9 @@ export function Dashboard() {
           <button
             onClick={() => setActiveTab('calendar')}
             className={`relative flex flex-col items-center justify-center gap-1 transition-all ${
-              activeTab === 'calendar' ? 'bg-teal-50 text-teal-700' : 'text-slate-500 hover:text-slate-700'
+              activeTab === 'calendar'
+                ? 'bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-300'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             <CalendarDays className="h-6 w-6" />
@@ -656,14 +689,14 @@ export function Dashboard() {
       </div>
 
       <div className="fixed bottom-8 left-1/2 z-30 hidden -translate-x-1/2 md:block">
-        <div className="rounded-full border border-white/70 bg-white/85 px-2 py-2 shadow-xl backdrop-blur-xl">
+        <div className="rounded-full border border-white/70 bg-white/85 px-2 py-2 shadow-xl backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-950/80">
           <div className="flex flex-wrap justify-center gap-1">
             <button
               onClick={() => setActiveTab('home')}
               className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'home'
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
               }`}
             >
               <Home className="h-4 w-4" />
@@ -675,7 +708,7 @@ export function Dashboard() {
               className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'log'
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
               }`}
             >
               <Clock className="h-4 w-4" />
@@ -687,7 +720,7 @@ export function Dashboard() {
               className={`relative flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'history'
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
               }`}
             >
               <History className="h-4 w-4" />
@@ -699,7 +732,7 @@ export function Dashboard() {
               className={`flex items-center gap-2 rounded-full px-5 py-2.5 transition-all ${
                 activeTab === 'calendar'
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
-                  : 'text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
               }`}
             >
               <CalendarDays className="h-4 w-4" />

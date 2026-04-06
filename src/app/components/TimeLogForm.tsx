@@ -149,20 +149,20 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
   };
 
   return (
-    <Card className="overflow-hidden border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl">
-      <CardHeader className="border-b border-slate-200/70 bg-[linear-gradient(135deg,_rgba(15,118,110,0.08),_rgba(14,165,233,0.08))] pb-4">
-        <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900">
+    <Card className="overflow-hidden border border-white/70 bg-white/85 shadow-[0_18px_60px_-34px_rgba(15,23,42,0.38)] backdrop-blur-xl dark:border-slate-700/70 dark:bg-slate-900/70 dark:shadow-[0_20px_70px_-35px_rgba(2,6,23,0.9)]">
+      <CardHeader className="border-b border-slate-200/70 bg-[linear-gradient(135deg,_rgba(15,118,110,0.08),_rgba(14,165,233,0.08))] pb-4 dark:border-slate-700/70 dark:bg-[linear-gradient(135deg,_rgba(20,184,166,0.12),_rgba(14,165,233,0.12))]">
+        <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
           <Clock className="w-5 h-5 text-teal-600" />
           {editingLog ? 'Edit Time Log' : 'Log Daily Time'}
         </CardTitle>
-        <CardDescription className="text-sm text-slate-600">
+        <CardDescription className="text-sm text-slate-600 dark:text-slate-400">
           {editingLog ? 'Update an existing attendance record' : 'Record your daily attendance and hours worked'}
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4 pb-5 pt-5 sm:px-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="date" className="text-sm font-medium text-slate-700">Date *</Label>
+            <Label htmlFor="date" className="text-sm font-medium text-slate-700 dark:text-slate-300">Date *</Label>
             <Input
               id="date"
               type="date"
@@ -170,11 +170,11 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
               onChange={(e) => setDate(e.target.value)}
               max={today}
               required
-              className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+              className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100"
             />
           </div>
 
-          <div className="flex items-center space-x-3 rounded-[1.25rem] border border-teal-200 bg-teal-50/80 p-4">
+          <div className="flex items-center space-x-3 rounded-[1.25rem] border border-teal-200 bg-teal-50/80 p-4 dark:border-teal-400/20 dark:bg-teal-500/10">
             <Checkbox
               id="present"
               checked={isPresent}
@@ -183,7 +183,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
             />
             <label
               htmlFor="present"
-              className="text-sm font-medium leading-none cursor-pointer flex-1 text-slate-900"
+              className="text-sm font-medium leading-none cursor-pointer flex-1 text-slate-900 dark:text-slate-100"
             >
               Mark as Present
             </label>
@@ -193,61 +193,61 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
             <>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="timeIn" className="text-sm font-medium text-slate-700">Time In *</Label>
+                  <Label htmlFor="timeIn" className="text-sm font-medium text-slate-700 dark:text-slate-300">Time In *</Label>
                   <Input
                     id="timeIn"
                     type="time"
                     value={timeIn}
                     onChange={(e) => setTimeIn(e.target.value)}
                     required={isPresent}
-                    className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                    className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="timeOut" className="text-sm font-medium text-slate-700">Time Out *</Label>
+                  <Label htmlFor="timeOut" className="text-sm font-medium text-slate-700 dark:text-slate-300">Time Out *</Label>
                   <Input
                     id="timeOut"
                     type="time"
                     value={timeOut}
                     onChange={(e) => setTimeOut(e.target.value)}
                     required={isPresent}
-                    className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                    className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100"
                   />
                 </div>
               </div>
 
-              <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-4">
+              <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
                 <div className="mb-3">
-                  <p className="text-sm font-medium text-slate-900">Lunch Break</p>
-                  <p className="text-xs text-slate-500">Optional. Enter only if the intern had a lunch break for this schedule.</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">Lunch Break</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Optional. Enter only if the intern had a lunch break for this schedule.</p>
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="lunchStart" className="text-sm font-medium text-slate-700">Lunch Start</Label>
+                    <Label htmlFor="lunchStart" className="text-sm font-medium text-slate-700 dark:text-slate-300">Lunch Start</Label>
                     <Input
                       id="lunchStart"
                       type="time"
                       value={lunchStart}
                       onChange={(e) => setLunchStart(e.target.value)}
-                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="lunchEnd" className="text-sm font-medium text-slate-700">Lunch End</Label>
+                    <Label htmlFor="lunchEnd" className="text-sm font-medium text-slate-700 dark:text-slate-300">Lunch End</Label>
                     <Input
                       id="lunchEnd"
                       type="time"
                       value={lunchEnd}
                       onChange={(e) => setLunchEnd(e.target.value)}
-                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                      className="h-12 rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 rounded-[1.25rem] border border-amber-200 bg-amber-50/80 p-4 sm:items-center">
+              <div className="flex items-start space-x-3 rounded-[1.25rem] border border-amber-200 bg-amber-50/80 p-4 sm:items-center dark:border-amber-400/20 dark:bg-amber-500/10">
                 <Checkbox
                   id="holiday"
                   checked={isHoliday}
@@ -256,19 +256,19 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                 />
                 <label
                   htmlFor="holiday"
-                  className="flex flex-1 cursor-pointer items-start gap-3 text-sm font-medium leading-none text-slate-900"
+                  className="flex flex-1 cursor-pointer items-start gap-3 text-sm font-medium leading-none text-slate-900 dark:text-slate-100"
                 >
                   <BadgeAlert className="mt-0.5 h-4 w-4 text-amber-600" />
                   <span>
                     Mark as Holiday
-                    <span className="mt-1 block text-xs font-normal text-slate-600">
+                    <span className="mt-1 block text-xs font-normal text-slate-600 dark:text-slate-400">
                       If checked, this log will count as double hours.
                     </span>
                   </span>
                 </label>
               </div>
 
-              <div className="flex items-start space-x-3 rounded-[1.25rem] border border-violet-200 bg-violet-50/80 p-4 sm:items-center">
+              <div className="flex items-start space-x-3 rounded-[1.25rem] border border-violet-200 bg-violet-50/80 p-4 sm:items-center dark:border-violet-400/20 dark:bg-violet-500/10">
                 <Checkbox
                   id="overtime"
                   checked={isOvertime}
@@ -277,12 +277,12 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                 />
                 <label
                   htmlFor="overtime"
-                  className="flex flex-1 cursor-pointer items-start gap-3 text-sm font-medium leading-none text-slate-900"
+                  className="flex flex-1 cursor-pointer items-start gap-3 text-sm font-medium leading-none text-slate-900 dark:text-slate-100"
                 >
                   <Clock className="mt-0.5 h-4 w-4 text-violet-600" />
                   <span>
                     Mark as Overtime
-                    <span className="mt-1 block text-xs font-normal text-slate-600">
+                    <span className="mt-1 block text-xs font-normal text-slate-600 dark:text-slate-400">
                       This tags the log as overtime, but the total hours still come from the actual time range.
                     </span>
                   </span>
@@ -315,16 +315,16 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="accomplishment" className="text-sm font-medium text-slate-700">Daily Accomplishment</Label>
+                <Label htmlFor="accomplishment" className="text-sm font-medium text-slate-700 dark:text-slate-300">Daily Accomplishment</Label>
                 <Textarea
                   id="accomplishment"
                   placeholder="What did you accomplish today?"
                   value={accomplishment}
                   onChange={(e) => setAccomplishment(e.target.value)}
                   rows={3}
-                  className="min-h-28 resize-none rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600"
+                  className="min-h-28 resize-none rounded-2xl border-slate-200 bg-white shadow-sm focus:border-teal-600 focus:ring-teal-600 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100"
                 />
-                <div className="flex items-center gap-2 text-xs text-slate-500">
+                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                   <NotebookPen className="h-3.5 w-3.5" />
                   Add a short summary so your history stays useful later.
                 </div>
@@ -333,15 +333,15 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
           )}
 
           {!isPresent && (
-            <div className="rounded-[1.25rem] border border-amber-200 bg-amber-50 p-4">
-              <p className="text-sm text-orange-900 font-medium">
+            <div className="rounded-[1.25rem] border border-amber-200 bg-amber-50 p-4 dark:border-amber-400/20 dark:bg-amber-500/10">
+              <p className="text-sm font-medium text-orange-900 dark:text-amber-100">
                 This day will be marked as absent. No hours will be recorded.
               </p>
             </div>
           )}
 
-          <div className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/80 p-3">
-            <div className="mb-3 flex items-center gap-2 text-sm text-slate-600">
+          <div className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-800/75">
+            <div className="mb-3 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
               <CalendarClock className="h-4 w-4 text-teal-600" />
               Save today&apos;s attendance and optionally deduct the actual lunch break for that schedule.
             </div>
@@ -350,7 +350,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
               disabled={isLoading}
               className="w-full h-12 rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-700/20 hover:from-teal-700 hover:to-cyan-700"
             >
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               {isLoading ? 'Saving...' : editingLog ? 'Update Time Log' : 'Save Time Log'}
             </Button>
             {editingLog && onCancelEdit && (
@@ -358,7 +358,7 @@ export function TimeLogForm({ editingLog, onCancelEdit, onSave }: TimeLogFormPro
                 type="button"
                 variant="outline"
                 onClick={onCancelEdit}
-                className="mt-3 w-full h-12 rounded-2xl"
+                className="mt-3 h-12 w-full rounded-2xl"
               >
                 Cancel Edit
               </Button>
