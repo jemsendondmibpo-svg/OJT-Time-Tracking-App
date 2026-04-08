@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useTheme } from 'next-themes';
 import { StatsCards } from './StatsCards';
@@ -26,8 +26,10 @@ import {
   BriefcaseBusiness,
   MoonStar,
   SunMedium,
+  Camera,
+  Trash2,
 } from 'lucide-react';
-import { Avatar, AvatarFallback } from './ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -104,6 +106,7 @@ export function Dashboard() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [profileForm, setProfileForm] = useState<OJTSetup | null>(null);
+  const profilePhotoInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -157,6 +160,7 @@ export function Dashboard() {
         previousHours: setupData.previous_hours,
         workingDays: setupData.working_days,
         startDate: setupData.start_date,
+        photoUrl: setupData.photo_url ?? '',
       };
       setSetup(mappedSetup);
 
@@ -394,6 +398,41 @@ export function Dashboard() {
     });
   };
 
+  const handleProfilePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      event.target.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Please upload an image smaller than 2MB');
+      event.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      setProfileForm((prev) => (prev ? { ...prev, photoUrl: result } : prev));
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read the selected image');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  };
+
+  const handleRemoveProfilePhoto = () => {
+    setProfileForm((prev) => (prev ? { ...prev, photoUrl: '' } : prev));
+  };
+
   const handleSaveProfile = async () => {
     if (!profileForm || !currentUser) return;
 
@@ -426,6 +465,7 @@ export function Dashboard() {
           total_required_hours: profileForm.totalRequiredHours,
           previous_hours: profileForm.previousHours,
           working_days: profileForm.workingDays,
+          photo_url: profileForm.photoUrl || null,
         })
         .eq('user_id', currentUser.id);
 
@@ -528,8 +568,11 @@ export function Dashboard() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full md:h-10 md:w-10">
                     <Avatar className="h-9 w-9 border-2 border-teal-200 dark:border-teal-500/50 md:h-10 md:w-10">
+                      {setup.photoUrl ? (
+                        <AvatarImage src={setup.photoUrl} alt={`${setup.internName} profile photo`} />
+                      ) : null}
                       <AvatarFallback className="bg-teal-600 text-sm font-medium text-white">
-                        {getInitials(currentUser.fullName)}
+                        {getInitials(setup.internName || currentUser.fullName)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -639,6 +682,26 @@ export function Dashboard() {
                 </Button>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75 sm:col-span-2">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <Avatar className="h-20 w-20 border-2 border-teal-200 dark:border-teal-500/50">
+                      {setup.photoUrl ? (
+                        <AvatarImage src={setup.photoUrl} alt={`${setup.internName} profile photo`} />
+                      ) : null}
+                      <AvatarFallback className="bg-teal-600 text-lg font-semibold text-white">
+                        {getInitials(setup.internName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                        Profile Photo
+                      </p>
+                      <p className="mt-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {setup.photoUrl ? 'Photo uploaded' : 'No photo uploaded yet'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75">
                   <p className="text-xs uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">Name of Intern</p>
                   <p className="mt-2 break-words text-sm font-semibold text-slate-900 dark:text-slate-100">{setup.internName}</p>
@@ -904,6 +967,58 @@ export function Dashboard() {
 
           {profileForm && (
             <div className="grid gap-5 py-2 md:grid-cols-2">
+              <div className="space-y-3 md:col-span-2">
+                <Label>Profile Photo</Label>
+                <div className="flex flex-col gap-4 rounded-[1.25rem] border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/75 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-20 w-20 border-2 border-dashed border-teal-300 dark:border-teal-500/50">
+                      {profileForm.photoUrl ? (
+                        <AvatarImage src={profileForm.photoUrl} alt={`${profileForm.internName} profile photo preview`} />
+                      ) : null}
+                      <AvatarFallback className="bg-teal-600 text-lg font-semibold text-white">
+                        {getInitials(profileForm.internName || currentUser.fullName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        Upload a profile photo
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        JPG, PNG, or WebP up to 2MB.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      ref={profilePhotoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleProfilePhotoChange}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => profilePhotoInputRef.current?.click()}
+                    >
+                      <Camera className="mr-2 h-4 w-4" />
+                      Upload Photo
+                    </Button>
+                    {profileForm.photoUrl ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleRemoveProfilePhoto}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Remove
+                      </Button>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="editInternName">Name of Intern</Label>
                 <Input

@@ -9,6 +9,7 @@ export interface OJTSetup {
   previousHours: number;
   workingDays: number[]; // 0 = Sunday, 1 = Monday, etc.
   startDate: string;
+  photoUrl?: string;
 }
 
 export interface DailyLog {
