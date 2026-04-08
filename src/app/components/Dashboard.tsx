@@ -129,13 +129,18 @@ export function Dashboard() {
   }, []);
 
   const loadData = async () => {
+    if (!currentUser) {
+      navigate('/login', { replace: true });
+      return;
+    }
+
     try {
       setIsLoading(true);
 
       const { data: setupData, error: setupError } = await supabase
         .from('ojt_setup')
         .select('*')
-        .eq('user_id', currentUser?.id)
+        .eq('user_id', currentUser.id)
         .maybeSingle();
 
       if (setupError) {
