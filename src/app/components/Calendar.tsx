@@ -19,6 +19,56 @@ import {
 import { EventDialog } from './EventDialog';
 import { Badge } from './ui/badge';
 
+type PhilippineHolidayType =
+  | 'regular'
+  | 'special-non-working'
+  | 'additional-special-non-working'
+  | 'special-working';
+
+interface PhilippineHoliday {
+  date: string;
+  name: string;
+  type: PhilippineHolidayType;
+}
+
+const PHILIPPINE_HOLIDAYS_2026: PhilippineHoliday[] = [
+  { date: '2026-01-01', name: "New Year's Day", type: 'regular' },
+  { date: '2026-02-17', name: 'Chinese New Year', type: 'additional-special-non-working' },
+  { date: '2026-02-25', name: 'EDSA People Power Revolution Anniversary', type: 'special-working' },
+  { date: '2026-03-20', name: "Eid'l Fitr", type: 'regular' },
+  { date: '2026-04-02', name: 'Maundy Thursday', type: 'regular' },
+  { date: '2026-04-03', name: 'Good Friday', type: 'regular' },
+  { date: '2026-04-04', name: 'Black Saturday', type: 'additional-special-non-working' },
+  { date: '2026-04-09', name: 'Araw ng Kagitingan', type: 'regular' },
+  { date: '2026-05-01', name: 'Labor Day', type: 'regular' },
+  { date: '2026-06-12', name: 'Independence Day', type: 'regular' },
+  { date: '2026-08-21', name: 'Ninoy Aquino Day', type: 'special-non-working' },
+  { date: '2026-08-31', name: 'National Heroes Day', type: 'regular' },
+  { date: '2026-11-01', name: "All Saints' Day", type: 'special-non-working' },
+  { date: '2026-11-02', name: "All Souls' Day", type: 'additional-special-non-working' },
+  { date: '2026-11-30', name: 'Bonifacio Day', type: 'regular' },
+  { date: '2026-12-08', name: 'Feast of the Immaculate Conception of Mary', type: 'special-non-working' },
+  { date: '2026-12-24', name: 'Christmas Eve', type: 'additional-special-non-working' },
+  { date: '2026-12-25', name: 'Christmas Day', type: 'regular' },
+  { date: '2026-12-30', name: 'Rizal Day', type: 'regular' },
+  { date: '2026-12-31', name: 'Last Day of the Year', type: 'special-non-working' },
+];
+
+const getHolidayBadgeClasses = (type: PhilippineHolidayType) => {
+  switch (type) {
+    case 'regular':
+      return 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-400/30 dark:bg-rose-500/10 dark:text-rose-100';
+    case 'special-non-working':
+      return 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-100';
+    case 'additional-special-non-working':
+      return 'border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-400/30 dark:bg-orange-500/10 dark:text-orange-100';
+    case 'special-working':
+      return 'border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200';
+    default:
+      return 'border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200';
+  }
+};
+
 interface CalendarProps {
   events: CalendarEvent[];
   logs: DailyLog[];
@@ -66,6 +116,11 @@ export function Calendar({ events, logs, onAddEvent, onUpdateEvent, onDeleteEven
       .reduce((total, log) => total + log.hoursWorked, 0);
   };
 
+  const getPhilippineHolidayForDate = (date: Date) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return PHILIPPINE_HOLIDAYS_2026.find((holiday) => holiday.date === dateStr) ?? null;
+  };
+
   const getEventColor = (type: CalendarEvent['type']) => {
     switch (type) {
       case 'important':
@@ -111,8 +166,10 @@ export function Calendar({ events, logs, onAddEvent, onUpdateEvent, onDeleteEven
         const cloneDay = day;
         const dayEvents = getEventsForDate(day);
         const hoursWorked = getHoursForDate(day);
+        const holiday = getPhilippineHolidayForDate(day);
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isToday = isSameDay(day, new Date());
+        const isRealHoliday = holiday && holiday.type !== 'special-working';
 
         days.push(
           <div
@@ -120,13 +177,20 @@ export function Calendar({ events, logs, onAddEvent, onUpdateEvent, onDeleteEven
             className={`min-h-[78px] cursor-pointer rounded-xl border p-1.5 transition-all md:min-h-[92px] md:rounded-2xl md:p-2 ${
               !isCurrentMonth
                 ? 'border-slate-200 bg-slate-50/80 opacity-50 dark:border-slate-800 dark:bg-slate-900/70'
-                : 'border-slate-200/90 bg-white/90 hover:border-teal-200 hover:bg-teal-50/40 dark:border-slate-700 dark:bg-slate-900/75 dark:hover:border-teal-400/30 dark:hover:bg-teal-500/10'
-            } ${isToday ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-900' : ''}`}
+                : isRealHoliday
+                  ? 'border-rose-200/90 bg-rose-50/70 hover:border-rose-300 hover:bg-rose-50 dark:border-rose-400/30 dark:bg-rose-500/10 dark:hover:border-rose-300/40 dark:hover:bg-rose-500/15'
+                  : 'border-slate-200/90 bg-white/90 hover:border-teal-200 hover:bg-teal-50/40 dark:border-slate-700 dark:bg-slate-900/75 dark:hover:border-teal-400/30 dark:hover:bg-teal-500/10'
+            } ${isToday ? 'ring-2 ring-teal-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-900' : ''} ${isRealHoliday ? 'ring-1 ring-rose-400 ring-offset-2 ring-offset-rose-50 dark:ring-offset-slate-900' : holiday?.type === 'special-working' ? 'ring-1 ring-slate-300 ring-offset-2 ring-offset-slate-50 dark:ring-slate-600 dark:ring-offset-slate-900' : ''}`}
             onClick={() => handleDateClick(cloneDay)}
           >
-            <div className={`mb-1 text-center text-[10px] font-medium md:text-left md:text-sm ${isToday ? 'font-bold text-teal-700 dark:text-teal-300' : 'text-slate-700 dark:text-slate-300'}`}>
+            <div className={`mb-1 text-center text-[10px] font-medium md:text-left md:text-sm ${isToday ? 'font-bold text-teal-700 dark:text-teal-300' : isRealHoliday ? 'font-semibold text-rose-700 dark:text-rose-300' : holiday?.type === 'special-working' ? 'font-semibold text-slate-700 dark:text-slate-300' : 'text-slate-700 dark:text-slate-300'}`}>
               {formattedDate}
             </div>
+            {holiday && (
+              <div className={`mb-1 truncate rounded-md border px-1 py-0.5 text-center text-[8px] font-semibold md:text-[10px] ${getHolidayBadgeClasses(holiday.type)}`}>
+                {holiday.name}
+              </div>
+            )}
             <div className="space-y-1">
               {hoursWorked > 0 && (
                 <div className="rounded-md bg-emerald-100 px-1 py-0.5 text-center text-[8px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300 md:rounded-lg md:px-2 md:py-1 md:text-[11px]">
